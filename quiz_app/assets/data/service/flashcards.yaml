@@ -1,0 +1,17 @@
+- id: svc_f001
+  term: "systemctl start"
+  explanation: "Commande pour démarrer un service système. Démarre immédiatement le service sans qu'il soit persistant après un redémarrage (sauf s'il est activé)."
+  example: "systemctl start apache2"
+  category: "service"
+
+- id: svc_f002
+  term: "systemctl enable"
+  explanation: "Commande pour activer un service au démarrage du système. Crée un lien symbolique dans les répertoires systemd appropriés pour que le service se lance automatiquement."
+  example: "systemctl enable nginx"
+  category: "service"
+
+- id: svc_f003
+  term: "/etc/systemd/system/"
+  explanation: "Répertoire contenant les fichiers de service systemd personnalisés et les services activés. Les fichiers .service définissent comment démarrer, arrêter et gérer les services."
+  example: "ExecStart=/usr/sbin/nginx -g 'daemon off;'"
+  category: "service"

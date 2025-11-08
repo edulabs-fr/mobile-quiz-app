@@ -34,6 +34,9 @@ class _QuickRevisionScreenState extends State<QuickRevisionScreen>
         title: const Text('Révision rapide'),
         bottom: TabBar(
           controller: _tabController,
+          indicatorColor: Colors.white,
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white70,
           tabs: const [
             Tab(
               icon: Icon(Icons.help_outline),

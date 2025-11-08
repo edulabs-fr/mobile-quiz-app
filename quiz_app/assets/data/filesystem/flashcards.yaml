@@ -1,0 +1,17 @@
+- id: fsc_f001
+  term: "ls"
+  explanation: "Commande pour lister le contenu d'un répertoire. Affiche les fichiers et dossiers avec diverses informations selon les options utilisées."
+  example: "ls -la /home"
+  category: "filesystem"
+
+- id: fsc_f002
+  term: "/etc/fstab"
+  explanation: "Fichier de configuration définissant les systèmes de fichiers à monter automatiquement au démarrage. Chaque ligne contient le point de montage, le type de système de fichiers et les options."
+  example: "/dev/sda1  /boot  ext4  defaults  0  2"
+  category: "filesystem"
+
+- id: fsc_f003
+  term: "mount"
+  explanation: "Commande pour monter un système de fichiers sur un point de montage. Permet d'accéder à un disque ou une partition spécifique dans l'arborescence."
+  example: "mount /dev/sdb1 /mnt/data"
+  category: "filesystem"
