@@ -17,7 +17,7 @@ class _QuizScreenState extends State<QuizScreen> {
   int? selectedQuestionCount;
   QuizEngine? quizEngine;
   bool isQuizActive = false;
-  String? selectedAnswer;
+  Set<String> selectedAnswers = {}; // Changé pour supporter les choix multiples
   bool showResult = false;
   bool? isCorrect;
   Map<String, int> categoryQuestionCounts = {};
@@ -242,9 +242,49 @@ class _QuizScreenState extends State<QuizScreen> {
                   Card(
                     child: Padding(
                       padding: const EdgeInsets.all(20),
-                      child: Text(
-                        question.question,
-                        style: Theme.of(context).textTheme.headlineSmall,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            question.question,
+                            style: Theme.of(context).textTheme.headlineSmall,
+                          ),
+                          const SizedBox(height: 12),
+                          // Métadonnées de la question
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: [
+                              if (question.isMultipleChoice)
+                                Chip(
+                                  label: const Text('Choix multiples'),
+                                  avatar: const Icon(Icons.check_box, size: 16),
+                                  backgroundColor: Colors.blue.shade100,
+                                ),
+                              Chip(
+                                label: Text('${question.points} pts'),
+                                avatar: const Icon(Icons.star, size: 16),
+                                backgroundColor: Colors.amber.shade100,
+                              ),
+                              Chip(
+                                label: Text(question.difficulty),
+                                avatar: Icon(
+                                  question.difficulty == 'facile'
+                                      ? Icons.sentiment_satisfied
+                                      : question.difficulty == 'moyen'
+                                          ? Icons.sentiment_neutral
+                                          : Icons.sentiment_dissatisfied,
+                                  size: 16,
+                                ),
+                                backgroundColor: question.difficulty == 'facile'
+                                    ? Colors.green.shade100
+                                    : question.difficulty == 'moyen'
+                                        ? Colors.orange.shade100
+                                        : Colors.red.shade100,
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -253,12 +293,19 @@ class _QuizScreenState extends State<QuizScreen> {
                   // Options de réponse
                   ...question.options.asMap().entries.map((entry) {
                     final option = entry.value;
-                    final isSelected = selectedAnswer == option;
+                    final isSelected = selectedAnswers.contains(option);
                     
                     Color? cardColor;
                     if (showResult && isSelected) {
-                      cardColor = isCorrect! ? Colors.green.shade100 : Colors.red.shade100;
+                      // Si l'option est sélectionnée et c'est une bonne réponse
+                      if (question.correctAnswers.contains(option)) {
+                        cardColor = Colors.green.shade100;
+                      } else {
+                        // Option sélectionnée mais incorrecte
+                        cardColor = Colors.red.shade100;
+                      }
                     } else if (showResult && question.correctAnswers.contains(option)) {
+                      // Afficher les bonnes réponses non sélectionnées
                       cardColor = Colors.green.shade50;
                     }
 
@@ -270,24 +317,55 @@ class _QuizScreenState extends State<QuizScreen> {
                             ? null
                             : () {
                                 setState(() {
-                                  selectedAnswer = option;
+                                  if (question.isMultipleChoice) {
+                                    // Choix multiples : toggle
+                                    if (isSelected) {
+                                      selectedAnswers.remove(option);
+                                    } else {
+                                      selectedAnswers.add(option);
+                                    }
+                                  } else {
+                                    // Choix unique : remplacer
+                                    selectedAnswers.clear();
+                                    selectedAnswers.add(option);
+                                  }
                                 });
                               },
                         child: Padding(
                           padding: const EdgeInsets.all(16),
                           child: Row(
                             children: [
-                              Radio<String>(
-                                value: option,
-                                groupValue: selectedAnswer,
-                                onChanged: showResult
-                                    ? null
-                                    : (value) {
-                                        setState(() {
-                                          selectedAnswer = value;
-                                        });
-                                      },
-                              ),
+                              // Checkbox pour choix multiples, Radio pour choix unique
+                              if (question.isMultipleChoice)
+                                Checkbox(
+                                  value: isSelected,
+                                  onChanged: showResult
+                                      ? null
+                                      : (value) {
+                                          setState(() {
+                                            if (value == true) {
+                                              selectedAnswers.add(option);
+                                            } else {
+                                              selectedAnswers.remove(option);
+                                            }
+                                          });
+                                        },
+                                )
+                              else
+                                Radio<String>(
+                                  value: option,
+                                  groupValue: selectedAnswers.isEmpty ? null : selectedAnswers.first,
+                                  onChanged: showResult
+                                      ? null
+                                      : (value) {
+                                          setState(() {
+                                            selectedAnswers.clear();
+                                            if (value != null) {
+                                              selectedAnswers.add(value);
+                                            }
+                                          });
+                                        },
+                                ),
                               Expanded(
                                 child: Text(
                                   option,
@@ -296,7 +374,7 @@ class _QuizScreenState extends State<QuizScreen> {
                               ),
                               if (showResult && question.correctAnswers.contains(option))
                                 const Icon(Icons.check_circle, color: Colors.green),
-                              if (showResult && isSelected && !isCorrect!)
+                              if (showResult && isSelected && !question.correctAnswers.contains(option))
                                 const Icon(Icons.cancel, color: Colors.red),
                             ],
                           ),
@@ -371,7 +449,7 @@ class _QuizScreenState extends State<QuizScreen> {
                 if (!showResult)
                   Expanded(
                     child: FilledButton(
-                      onPressed: selectedAnswer != null ? _checkAnswer : null,
+                      onPressed: selectedAnswers.isNotEmpty ? _checkAnswer : null,
                       child: const Text('Valider'),
                     ),
                   ),
@@ -460,7 +538,7 @@ class _QuizScreenState extends State<QuizScreen> {
                   setState(() {
                     isQuizActive = false;
                     quizEngine = null;
-                    selectedAnswer = null;
+                    selectedAnswers.clear();
                     showResult = false;
                   });
                 },
@@ -501,16 +579,22 @@ class _QuizScreenState extends State<QuizScreen> {
       quizEngine = QuizEngine(questions);
       quizEngine!.initializeQuiz(numberOfQuestions: numberOfQuestions);
       isQuizActive = true;
-      selectedAnswer = null;
+      selectedAnswers.clear();
       showResult = false;
     });
   }
 
   /// Vérifier la réponse
   void _checkAnswer() {
-    if (selectedAnswer == null) return;
+    if (selectedAnswers.isEmpty) return;
 
-    final correct = quizEngine!.checkAnswer(selectedAnswer!);
+    final currentQuestion = quizEngine!.getCurrentQuestion();
+    if (currentQuestion == null) return;
+
+    // Utiliser la méthode appropriée selon le type de question
+    final correct = currentQuestion.isMultipleChoice
+        ? quizEngine!.checkMultipleAnswers(selectedAnswers.toList())
+        : quizEngine!.checkAnswer(selectedAnswers.first);
 
     setState(() {
       isCorrect = correct;
@@ -539,7 +623,7 @@ class _QuizScreenState extends State<QuizScreen> {
     } else {
       quizEngine!.nextQuestion();
       setState(() {
-        selectedAnswer = null;
+        selectedAnswers.clear();
         showResult = false;
         isCorrect = null;
       });
