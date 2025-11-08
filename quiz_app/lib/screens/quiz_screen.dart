@@ -726,12 +726,57 @@ class _QuizScreenState extends State<QuizScreen> {
   Future<void> _startQuiz() async {
     if (selectedCategories.isEmpty || selectedQuestionCount == null) return;
 
+    // Si selectedQuestionCount est -1, on prend toutes les questions
+    final numberOfQuestions = selectedQuestionCount == -1 
+        ? null 
+        : selectedQuestionCount;
+
     // Charger les questions de toutes les catégories sélectionnées
-    List<Question> allQuestions = [];
+    Map<String, List<Question>> questionsByCategory = {};
     
     for (final category in selectedCategories) {
       final questions = await DataService.loadQuestions(category);
-      allQuestions.addAll(questions);
+      if (questions.isNotEmpty) {
+        questionsByCategory[category] = questions;
+      }
+    }
+
+    if (questionsByCategory.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Aucune question disponible pour les catégories sélectionnées'),
+          ),
+        );
+      }
+      return;
+    }
+
+    // Distribuer les questions de manière équitable entre les catégories
+    List<Question> allQuestions = [];
+    
+    if (numberOfQuestions == null) {
+      // Prendre toutes les questions
+      for (final questions in questionsByCategory.values) {
+        allQuestions.addAll(questions);
+      }
+    } else {
+      // Distribuer équitablement
+      final numCategories = questionsByCategory.length;
+      final questionsPerCategory = numberOfQuestions ~/ numCategories; // Division entière
+      final remainder = numberOfQuestions % numCategories; // Reste
+      
+      int categoryIndex = 0;
+      for (final category in questionsByCategory.keys) {
+        final questions = questionsByCategory[category]!;
+        
+        // Ajouter des questions supplémentaires au début si reste > 0
+        final count = questionsPerCategory + (categoryIndex < remainder ? 1 : 0);
+        final questionsToAdd = questions.take(count).toList();
+        
+        allQuestions.addAll(questionsToAdd);
+        categoryIndex++;
+      }
     }
 
     if (allQuestions.isEmpty) {
@@ -745,14 +790,9 @@ class _QuizScreenState extends State<QuizScreen> {
       return;
     }
 
-    // Si selectedQuestionCount est -1, on prend toutes les questions
-    final numberOfQuestions = selectedQuestionCount == -1 
-        ? null 
-        : selectedQuestionCount;
-
     setState(() {
       quizEngine = QuizEngine(allQuestions);
-      quizEngine!.initializeQuiz(numberOfQuestions: numberOfQuestions);
+      quizEngine!.initializeQuiz(numberOfQuestions: allQuestions.length);
       isQuizActive = true;
       selectedAnswers.clear();
       showResult = false;

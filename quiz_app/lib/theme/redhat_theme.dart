@@ -71,7 +71,7 @@ class RedHatTheme {
         }),
         iconTheme: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return const IconThemeData(color: redHatRed);
+            return const IconThemeData(color: redHatWhite); // White icon on red background
           }
           return const IconThemeData(color: redHatDarkGray);
         }),
