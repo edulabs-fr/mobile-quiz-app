@@ -1,0 +1,59 @@
+- id: f001
+  term: "useradd"
+  explanation: "Commande bas-niveau pour créer un nouvel utilisateur système. Requiert des privilèges root et nécessite la configuration manuelle du mot de passe avec passwd."
+  example: "useradd -m -s /bin/bash john"
+  category: "user_management"
+
+- id: f002
+  term: "/etc/passwd"
+  explanation: "Fichier contenant les informations sur tous les comptes utilisateurs : nom d'utilisateur, UID, GID, répertoire home, et shell par défaut. Les mots de passe chiffrés sont maintenant stockés dans /etc/shadow pour plus de sécurité."
+  example: "john:x:1001:1001:John Doe:/home/john:/bin/bash"
+  category: "user_management"
+
+- id: f003
+  term: "/etc/shadow"
+  explanation: "Fichier protégé contenant les mots de passe chiffrés et les informations de politique de mot de passe (date d'expiration, durée minimale, etc.). Lisible uniquement par root."
+  example: "john:$6$rounds=5000$...:18500:0:99999:7:::"
+  category: "user_management"
+
+- id: f004
+  term: "usermod"
+  explanation: "Commande pour modifier un compte utilisateur existant : changer le shell, ajouter à des groupes, modifier le répertoire home, verrouiller/déverrouiller le compte, etc."
+  example: "usermod -aG sudo john"
+  category: "user_management"
+
+- id: f005
+  term: "userdel"
+  explanation: "Commande pour supprimer un compte utilisateur. L'option -r supprime également le répertoire home et la boîte mail de l'utilisateur."
+  example: "userdel -r john"
+  category: "user_management"
+
+- id: f006
+  term: "UID (User ID)"
+  explanation: "Numéro unique identifiant un utilisateur dans le système. UID 0 = root, UIDs 1-999 = utilisateurs système, UIDs ≥1000 = utilisateurs normaux."
+  example: "UID de root = 0, UID du premier utilisateur = 1000"
+  category: "user_management"
+
+- id: f007
+  term: "GID (Group ID)"
+  explanation: "Numéro unique identifiant un groupe dans le système. Chaque utilisateur a un groupe primaire (défini dans /etc/passwd) et peut appartenir à plusieurs groupes secondaires."
+  example: "GID du groupe users = 100"
+  category: "user_management"
+
+- id: f008
+  term: "passwd"
+  explanation: "Commande pour définir ou changer le mot de passe d'un utilisateur. Peut aussi verrouiller (-l) ou déverrouiller (-u) un compte."
+  example: "passwd john"
+  category: "user_management"
+
+- id: f009
+  term: "groups"
+  explanation: "Commande pour afficher les groupes auxquels appartient un utilisateur. Sans argument, affiche les groupes de l'utilisateur courant."
+  example: "groups john → john sudo docker"
+  category: "user_management"
+
+- id: f010
+  term: "su (Switch User)"
+  explanation: "Commande pour changer d'utilisateur dans le terminal actuel. 'su -' charge l'environnement complet du nouvel utilisateur. 'su' sans argument bascule vers root."
+  example: "su - john"
+  category: "user_management"

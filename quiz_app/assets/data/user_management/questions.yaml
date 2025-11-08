@@ -1,0 +1,180 @@
+# ============================================
+# Questions User Management - Linux RHCSA
+# ============================================
+# Format enrichi avec :
+# - question_type: 'single' (défaut) ou 'multiple' pour choix multiple
+# - points: nombre de points (défaut: 1)
+# - tags: mots-clés pour recherche
+# - reference: lien vers documentation
+
+- id: q001
+  question: "Quelle commande permet de créer un nouvel utilisateur sous Linux ?"
+  options:
+    - "useradd"
+    - "adduser"
+    - "createuser"
+    - "newuser"
+  correct_answers: ["useradd"]
+  explanation: "useradd est la commande bas-niveau pour créer un utilisateur. adduser est un wrapper plus convivial disponible sur Debian/Ubuntu."
+  hint: "Cette commande se trouve dans /usr/sbin/"
+  category: "user_management"
+  difficulty: "easy"
+  question_type: "single"
+  points: 1
+  tags: ["useradd", "création", "utilisateur", "commande"]
+  reference: "man useradd"
+
+- id: q002
+  question: "Comment définir le mot de passe d'un utilisateur ?"
+  options:
+    - "passwd username"
+    - "password username"
+    - "setpass username"
+    - "usermod -p username"
+  correct_answers: ["passwd username"]
+  explanation: "La commande passwd permet de définir ou modifier le mot de passe d'un utilisateur."
+  hint: "Pensez à 'password' mais en plus court"
+  category: "user_management"
+  difficulty: "easy"
+  question_type: "single"
+  points: 1
+  tags: ["passwd", "mot de passe", "sécurité"]
+
+- id: q003
+  question: "Quelles options de useradd sont correctes ? (Choix multiple)"
+  options:
+    - "-d pour spécifier le répertoire home"
+    - "-m pour créer automatiquement le répertoire home"
+    - "-h pour afficher l'aide"
+    - "-s pour définir le shell par défaut"
+  correct_answers: 
+    - "-d pour spécifier le répertoire home"
+    - "-m pour créer automatiquement le répertoire home"
+    - "-s pour définir le shell par défaut"
+  explanation: "Les options -d, -m et -s sont valides. L'option -h n'existe pas pour useradd (utilisez --help à la place)."
+  hint: "Trois options sont correctes"
+  category: "user_management"
+  difficulty: "medium"
+  question_type: "multiple"
+  points: 2
+  tags: ["useradd", "options", "création utilisateur"]
+
+- id: q004
+  question: "Comment supprimer un utilisateur avec son répertoire home ?"
+  options:
+    - "userdel -r username"
+    - "deluser username"
+    - "rmuser username"
+    - "usermod -d username"
+  correct_answers: ["userdel -r username"]
+  explanation: "userdel -r supprime l'utilisateur et son répertoire home. Sans -r, seul le compte est supprimé."
+  hint: "del pour delete, -r pour récursif"
+  category: "user_management"
+  difficulty: "medium"
+  points: 1
+  tags: ["userdel", "suppression", "utilisateur"]
+
+- id: q005
+  question: "Quels fichiers contiennent des informations sur les comptes utilisateurs ? (Choix multiple)"
+  options:
+    - "/etc/passwd"
+    - "/etc/shadow"
+    - "/etc/users"
+    - "/etc/group"
+  correct_answers: 
+    - "/etc/passwd"
+    - "/etc/shadow"
+    - "/etc/group"
+  explanation: "/etc/passwd contient les informations de base (UID, GID, shell). /etc/shadow contient les mots de passe chiffrés. /etc/group contient les groupes. /etc/users n'existe pas."
+  hint: "Trois fichiers sont corrects"
+  category: "user_management"
+  difficulty: "medium"
+  question_type: "multiple"
+  points: 2
+  tags: ["fichiers système", "passwd", "shadow", "group"]
+  reference: "man 5 passwd, man 5 shadow"
+
+- id: q006
+  question: "Comment ajouter un utilisateur à un groupe supplémentaire ?"
+  options:
+    - "usermod -aG groupname username"
+    - "addgroup username groupname"
+    - "groupadd username groupname"
+    - "useradd -g groupname username"
+  correct_answers: ["usermod -aG groupname username"]
+  explanation: "usermod -aG ajoute l'utilisateur à un groupe supplémentaire sans retirer les autres groupes. Sans -a, les autres groupes seraient perdus."
+  hint: "-a pour append, -G pour groups"
+  category: "user_management"
+  difficulty: "medium"
+  points: 1
+  tags: ["usermod", "groupe", "append"]
+
+- id: q007
+  question: "Quelles commandes affichent les groupes d'un utilisateur ? (Choix multiple)"
+  options:
+    - "groups username"
+    - "id username"
+    - "usergroups username"
+    - "listgroups username"
+  correct_answers: 
+    - "groups username"
+    - "id username"
+  explanation: "Les deux commandes affichent les groupes. 'groups' affiche uniquement les groupes, 'id' donne aussi l'UID et GID."
+  hint: "Deux commandes sont correctes"
+  category: "user_management"
+  difficulty: "easy"
+  question_type: "multiple"
+  points: 1
+  tags: ["groups", "id", "affichage"]
+
+- id: q008
+  question: "Quelles méthodes permettent de verrouiller un compte utilisateur ? (Choix multiple)"
+  options:
+    - "usermod -L username"
+    - "passwd -l username"
+    - "lockuser username"
+    - "chage -E 0 username"
+  correct_answers: 
+    - "usermod -L username"
+    - "passwd -l username"
+    - "chage -E 0 username"
+  explanation: "usermod -L et passwd -l verrouillent en préfixant le mot de passe par '!'. chage -E 0 expire immédiatement le compte. lockuser n'existe pas."
+  hint: "Trois méthodes sont valides"
+  category: "user_management"
+  difficulty: "hard"
+  question_type: "multiple"
+  points: 3
+  tags: ["verrouillage", "sécurité", "usermod", "passwd", "chage"]
+
+- id: q009
+  question: "Quel est l'UID par défaut du premier utilisateur non-système ?"
+  options:
+    - "1000"
+    - "500"
+    - "0"
+    - "100"
+  correct_answers: ["1000"]
+  explanation: "Sur la plupart des distributions Linux modernes, les UID utilisateurs commencent à 1000. L'UID 0 est réservé à root."
+  hint: "Un nombre rond à 4 chiffres"
+  category: "user_management"
+  difficulty: "easy"
+  points: 1
+  tags: ["UID", "utilisateur", "identifiant"]
+
+- id: q010
+  question: "Quelles commandes permettent de changer le shell d'un utilisateur ? (Choix multiple)"
+  options:
+    - "usermod -s /bin/bash username"
+    - "chsh -s /bin/bash username"
+    - "setshell username /bin/bash"
+    - "passwd -s /bin/bash username"
+  correct_answers: 
+    - "usermod -s /bin/bash username"
+    - "chsh -s /bin/bash username"
+  explanation: "usermod -s et chsh -s permettent de changer le shell. chsh est plus spécialisé pour cette tâche."
+  hint: "Deux commandes sont correctes, s pour shell"
+  category: "user_management"
+  difficulty: "medium"
+  question_type: "multiple"
+  points: 2
+  tags: ["shell", "usermod", "chsh"]
