@@ -28,9 +28,8 @@ class QuizEngine {
       currentQuestions = shuffledQuestions;
     }
 
-    // Note: Pour le MVP, nous ne mélangeons pas les options individuelles
-    // car cela nécessiterait de modifier la structure de Question
-    // Cela peut être ajouté dans une version future
+    // Mélanger les options de chaque question
+    currentQuestions = currentQuestions.map((q) => q.withShuffledOptions()).toList();
 
     // Réinitialiser les compteurs
     currentIndex = 0;
@@ -96,15 +95,22 @@ class QuizEngine {
 
   /// Passer à la question suivante
   void nextQuestion() {
-    if (currentIndex < currentQuestions.length - 1) {
+    if (currentIndex < currentQuestions.length) {
       currentIndex++;
-      questionStartTime = DateTime.now();
+      if (!isQuizFinished()) {
+        questionStartTime = DateTime.now();
+      }
     }
   }
 
   /// Vérifier si le quiz est terminé
   bool isQuizFinished() {
-    return currentIndex >= currentQuestions.length - 1;
+    return currentIndex >= currentQuestions.length;
+  }
+
+  /// Vérifier si c'est la dernière question
+  bool isLastQuestion() {
+    return currentIndex == currentQuestions.length - 1;
   }
 
   /// Obtenir le score en pourcentage

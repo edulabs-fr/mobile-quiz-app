@@ -1,0 +1,382 @@
+# Questions faciles (1 point)
+- id: "svc_001"
+  question: "Quelle commande systemctl permet de démarrer un service ?"
+  options:
+    - "systemctl start"
+    - "systemctl begin"
+    - "systemctl run"
+    - "systemctl execute"
+  correct_answers:
+    - "systemctl start"
+  explanation: "systemctl start <service> démarre un service sous systemd."
+  category: "service"
+  difficulty: "facile"
+  question_type: "single"
+  points: 1
+  tags:
+    - "systemctl"
+    - "gestion"
+  reference: "man systemctl"
+
+- id: "svc_002"
+  question: "Quelle commande arrête un service ?"
+  options:
+    - "systemctl stop"
+    - "systemctl end"
+    - "systemctl kill"
+    - "systemctl terminate"
+  correct_answers:
+    - "systemctl stop"
+  explanation: "systemctl stop <service> arrête un service en cours d'exécution."
+  category: "service"
+  difficulty: "facile"
+  question_type: "single"
+  points: 1
+  tags:
+    - "systemctl"
+    - "gestion"
+  reference: "man systemctl"
+
+- id: "svc_003"
+  question: "Quelle commande affiche le statut d'un service ?"
+  options:
+    - "systemctl status"
+    - "systemctl show"
+    - "systemctl info"
+    - "systemctl display"
+  correct_answers:
+    - "systemctl status"
+  explanation: "systemctl status <service> affiche l'état détaillé d'un service."
+  category: "service"
+  difficulty: "facile"
+  question_type: "single"
+  points: 1
+  tags:
+    - "systemctl"
+    - "monitoring"
+  reference: "man systemctl"
+
+- id: "svc_004"
+  question: "Quelle commande active un service au démarrage du système ?"
+  options:
+    - "systemctl enable"
+    - "systemctl autostart"
+    - "systemctl boot"
+    - "systemctl persist"
+  correct_answers:
+    - "systemctl enable"
+  explanation: "systemctl enable <service> crée les liens nécessaires pour démarrer le service au boot."
+  category: "service"
+  difficulty: "facile"
+  question_type: "single"
+  points: 1
+  tags:
+    - "systemctl"
+    - "démarrage"
+  reference: "man systemctl"
+
+- id: "svc_005"
+  question: "Quelle commande désactive un service au démarrage ?"
+  options:
+    - "systemctl disable"
+    - "systemctl noboot"
+    - "systemctl remove"
+    - "systemctl unload"
+  correct_answers:
+    - "systemctl disable"
+  explanation: "systemctl disable <service> supprime les liens de démarrage automatique."
+  category: "service"
+  difficulty: "facile"
+  question_type: "single"
+  points: 1
+  tags:
+    - "systemctl"
+    - "démarrage"
+  reference: "man systemctl"
+
+- id: "svc_006"
+  question: "Où sont stockés les fichiers unit systemd système ?"
+  options:
+    - "/lib/systemd/system/"
+    - "/etc/systemd/"
+    - "/var/systemd/"
+    - "/usr/systemd/"
+  correct_answers:
+    - "/lib/systemd/system/"
+  explanation: "/lib/systemd/system/ (ou /usr/lib/systemd/system/) contient les units par défaut."
+  category: "service"
+  difficulty: "facile"
+  question_type: "single"
+  points: 1
+  tags:
+    - "systemd"
+    - "arborescence"
+
+- id: "svc_007"
+  question: "Quelle commande recharge la configuration d'un service sans l'arrêter ?"
+  options:
+    - "systemctl reload"
+    - "systemctl refresh"
+    - "systemctl update"
+    - "systemctl restart"
+  correct_answers:
+    - "systemctl reload"
+  explanation: "systemctl reload <service> recharge la configuration sans interruption de service."
+  category: "service"
+  difficulty: "facile"
+  question_type: "single"
+  points: 1
+  tags:
+    - "systemctl"
+    - "configuration"
+  reference: "man systemctl"
+
+- id: "svc_008"
+  question: "Quelle commande liste tous les services ?"
+  options:
+    - "systemctl list-units --type=service"
+    - "systemctl show-services"
+    - "systemctl list-all"
+    - "systemctl services"
+  correct_answers:
+    - "systemctl list-units --type=service"
+  explanation: "systemctl list-units --type=service affiche tous les services chargés."
+  category: "service"
+  difficulty: "facile"
+  question_type: "single"
+  points: 1
+  tags:
+    - "systemctl"
+    - "listing"
+  reference: "man systemctl"
+
+# Questions moyennes (2 points)
+- id: "svc_009"
+  question: "Quelles commandes permettent de voir les logs d'un service ?"
+  options:
+    - "journalctl -u <service>"
+    - "systemctl logs <service>"
+    - "tail /var/log/<service>.log"
+    - "dmesg"
+  correct_answers:
+    - "journalctl -u <service>"
+  explanation: "journalctl -u <service> affiche les logs systemd d'un service spécifique."
+  category: "service"
+  difficulty: "moyen"
+  question_type: "single"
+  points: 2
+  tags:
+    - "journalctl"
+    - "logs"
+  reference: "man journalctl"
+
+- id: "svc_010"
+  question: "Que fait la commande 'systemctl daemon-reload' ?"
+  options:
+    - "Recharge les fichiers de configuration systemd"
+    - "Redémarre tous les services"
+    - "Recharge le système"
+    - "Redémarre le daemon systemd"
+  correct_answers:
+    - "Recharge les fichiers de configuration systemd"
+  explanation: "daemon-reload relit tous les fichiers unit après modification, sans redémarrer les services."
+  category: "service"
+  difficulty: "moyen"
+  question_type: "single"
+  points: 2
+  tags:
+    - "systemctl"
+    - "configuration"
+  reference: "man systemctl"
+
+- id: "svc_011"
+  question: "Quelles sections sont obligatoires dans un fichier unit systemd ?"
+  options:
+    - "[Unit]"
+    - "[Service]"
+    - "[Install]"
+    - "[Config]"
+  correct_answers:
+    - "[Unit]"
+    - "[Service]"
+  explanation: "[Unit] décrit le service, [Service] définit l'exécution. [Install] est pour enable/disable."
+  category: "service"
+  difficulty: "moyen"
+  question_type: "multiple"
+  points: 2
+  tags:
+    - "systemd"
+    - "configuration"
+
+- id: "svc_012"
+  question: "Quelle directive dans [Service] définit la commande à exécuter ?"
+  options:
+    - "ExecStart="
+    - "Command="
+    - "Run="
+    - "Execute="
+  correct_answers:
+    - "ExecStart="
+  explanation: "ExecStart= spécifie la commande à exécuter au démarrage du service."
+  category: "service"
+  difficulty: "moyen"
+  question_type: "single"
+  points: 2
+  tags:
+    - "systemd"
+    - "unit file"
+
+- id: "svc_013"
+  question: "Quels types de Type= sont disponibles dans [Service] ?"
+  options:
+    - "simple"
+    - "forking"
+    - "oneshot"
+    - "notify"
+  correct_answers:
+    - "simple"
+    - "forking"
+    - "oneshot"
+    - "notify"
+  explanation: "Tous sont des types valides. simple=défaut, forking=daemon, oneshot=tâche unique, notify=notification."
+  category: "service"
+  difficulty: "moyen"
+  question_type: "multiple"
+  points: 2
+  tags:
+    - "systemd"
+    - "types"
+
+- id: "svc_014"
+  question: "Que fait la commande 'systemctl restart' ?"
+  options:
+    - "Arrête puis redémarre le service"
+    - "Recharge la configuration"
+    - "Redémarre le système"
+    - "Active le service"
+  correct_answers:
+    - "Arrête puis redémarre le service"
+  explanation: "restart est équivalent à stop + start, avec interruption de service."
+  category: "service"
+  difficulty: "moyen"
+  question_type: "single"
+  points: 2
+  tags:
+    - "systemctl"
+    - "gestion"
+  reference: "man systemctl"
+
+- id: "svc_015"
+  question: "Où placer les fichiers unit personnalisés pour éviter les écrasements lors des mises à jour ?"
+  options:
+    - "/etc/systemd/system/"
+    - "/lib/systemd/system/"
+    - "/usr/systemd/system/"
+    - "/var/systemd/system/"
+  correct_answers:
+    - "/etc/systemd/system/"
+  explanation: "/etc/systemd/system/ a la priorité sur /lib/systemd/system/ et ne sera pas écrasé."
+  category: "service"
+  difficulty: "moyen"
+  question_type: "single"
+  points: 2
+  tags:
+    - "systemd"
+    - "configuration"
+
+- id: "svc_016"
+  question: "Quelle commande affiche les dépendances d'un service ?"
+  options:
+    - "systemctl list-dependencies"
+    - "systemctl show-deps"
+    - "systemctl depends"
+    - "systemctl tree"
+  correct_answers:
+    - "systemctl list-dependencies"
+  explanation: "systemctl list-dependencies <service> affiche l'arbre des dépendances."
+  category: "service"
+  difficulty: "moyen"
+  question_type: "single"
+  points: 2
+  tags:
+    - "systemctl"
+    - "dépendances"
+  reference: "man systemctl"
+
+# Questions difficiles (3 points)
+- id: "svc_017"
+  question: "Quelles directives de [Unit] gèrent les dépendances de services ?"
+  options:
+    - "Requires="
+    - "Wants="
+    - "After="
+    - "Before="
+  correct_answers:
+    - "Requires="
+    - "Wants="
+    - "After="
+    - "Before="
+  explanation: "Requires/Wants=dépendances fortes/faibles. After/Before=ordre de démarrage."
+  category: "service"
+  difficulty: "difficile"
+  question_type: "multiple"
+  points: 3
+  tags:
+    - "systemd"
+    - "dépendances"
+
+- id: "svc_018"
+  question: "Que fait la directive 'Restart=on-failure' dans [Service] ?"
+  options:
+    - "Redémarre le service uniquement en cas d'échec"
+    - "Redémarre le service systématiquement"
+    - "Désactive le redémarrage"
+    - "Redémarre après un délai"
+  correct_answers:
+    - "Redémarre le service uniquement en cas d'échec"
+  explanation: "Restart=on-failure redémarre automatiquement le service s'il plante (code sortie non-zéro)."
+  category: "service"
+  difficulty: "difficile"
+  question_type: "single"
+  points: 3
+  tags:
+    - "systemd"
+    - "haute disponibilité"
+
+- id: "svc_019"
+  question: "Quelles commandes permettent de masquer complètement un service ?"
+  options:
+    - "systemctl mask"
+    - "systemctl hide"
+    - "systemctl block"
+    - "systemctl disable"
+  correct_answers:
+    - "systemctl mask"
+  explanation: "mask crée un lien vers /dev/null, empêchant totalement le démarrage (même manuel)."
+  category: "service"
+  difficulty: "difficile"
+  question_type: "single"
+  points: 3
+  tags:
+    - "systemctl"
+    - "sécurité"
+  reference: "man systemctl"
+
+- id: "svc_020"
+  question: "Que fait la commande 'systemctl isolate multi-user.target' ?"
+  options:
+    - "Bascule vers le mode multi-utilisateur (runlevel 3)"
+    - "Isole un utilisateur"
+    - "Démarre tous les services"
+    - "Redémarre le système"
+  correct_answers:
+    - "Bascule vers le mode multi-utilisateur (runlevel 3)"
+  explanation: "isolate arrête tous les services non requis par la target et démarre ceux nécessaires."
+  category: "service"
+  difficulty: "difficile"
+  question_type: "single"
+  points: 3
+  tags:
+    - "systemctl"
+    - "targets"
+  reference: "man systemctl"

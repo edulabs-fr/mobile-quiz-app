@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../services/storage_service.dart';
+import 'package:quiz_app/models/quiz_result.dart';
+import 'package:quiz_app/services/storage_service.dart';
+import 'package:quiz_app/widgets/stat_card.dart';
 
 /// Écran de progression et statistiques
 class ProgressScreen extends StatefulWidget {
@@ -10,18 +12,49 @@ class ProgressScreen extends StatefulWidget {
 }
 
 class _ProgressScreenState extends State<ProgressScreen> {
-  @override
-  Widget build(BuildContext context) {
+  // Clé pour forcer le rafraîchissement
+  Key _futureBuilderKey = UniqueKey();
+
+  void _refreshData() {
+    setState(() {
+      _futureBuilderKey = UniqueKey();
+    });
+  }
+
+  Future<Map<String, dynamic>> _loadProgressData() async {
     final results = StorageService.getAllResults();
     final averageScore = StorageService.getAverageScore();
     final topScore = StorageService.getTopScore();
+    return {
+      'results': results,
+      'averageScore': averageScore,
+      'topScore': topScore,
+    };
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Progression'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            tooltip: 'Rafraîchir',
+            onPressed: _refreshData,
+          ),
+        ],
       ),
-      body: results.isEmpty
-          ? Center(
+      body: FutureBuilder<Map<String, dynamic>>(
+        key: _futureBuilderKey,
+        future: _loadProgressData(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (!snapshot.hasData || (snapshot.data!['results'] as List).isEmpty) {
+            return Center(
               child: Padding(
                 padding: const EdgeInsets.all(24),
                 child: Column(
@@ -46,8 +79,14 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   ],
                 ),
               ),
-            )
-          : SingleChildScrollView(
+            );
+          }
+          
+          final results = snapshot.data!['results'] as List<QuizResult>;
+          final averageScore = snapshot.data!['averageScore'];
+          final topScore = snapshot.data!['topScore'];
+
+          return SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -95,7 +134,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                         child: _StatCard(
                           icon: Icons.check_circle,
                           title: 'Total questions',
-                          value: '${results.fold<int>(0, (sum, r) => sum + r.questionsTotal)}',
+                          value: '${results.fold<double>(0.0, (sum, r) => sum + r.questionsTotal)}',
                           color: Colors.purple,
                         ),
                       ),
@@ -147,7 +186,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   }),
                 ],
               ),
-            ),
+            );
+        },
+      ),
     );
   }
 

@@ -105,6 +105,12 @@ class StorageService {
     return results.take(limit).toList();
   }
 
+  /// Effacer tout l'historique des résultats
+  static Future<void> clearAllResults() async {
+    final box = Hive.box(_resultsBox);
+    await box.clear();
+  }
+
   // ==================== QUESTIONS MARQUÉES ====================
 
   /// Marquer/Démarquer une question

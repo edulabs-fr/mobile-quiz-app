@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:hive/hive.dart';
 
 part 'question.g.dart';
@@ -97,6 +98,13 @@ class Question {
   bool areCorrectAnswers(List<String> answers) {
     if (answers.length != correctAnswers.length) return false;
     return answers.every((answer) => correctAnswers.contains(answer));
+  }
+
+  /// Créer une copie avec les options mélangées
+  Question withShuffledOptions() {
+    final random = Random();
+    final shuffledOptions = List<String>.from(options)..shuffle(random);
+    return copyWith(options: shuffledOptions);
   }
 
   /// Copier avec modifications

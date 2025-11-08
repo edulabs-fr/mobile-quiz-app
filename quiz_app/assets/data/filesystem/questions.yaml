@@ -1,0 +1,582 @@
+# Questions faciles (1 point)
+- id: "fs_001"
+  question: "Quelle commande permet de lister le contenu d'un répertoire ?"
+  options:
+    - "ls"
+    - "dir"
+    - "list"
+    - "show"
+  correct_answers:
+    - "ls"
+  explanation: "La commande ls (list) est utilisée pour afficher le contenu d'un répertoire sous Linux."
+  hint: "C'est l'une des commandes les plus utilisées"
+  category: "filesystem"
+  difficulty: "facile"
+  question_type: "single"
+  points: 1
+  tags:
+    - "commandes"
+    - "navigation"
+  reference: "man ls"
+
+- id: "fs_002"
+  question: "Quelle commande affiche le répertoire de travail actuel ?"
+  options:
+    - "pwd"
+    - "cwd"
+    - "whereami"
+    - "dir"
+  correct_answers:
+    - "pwd"
+  explanation: "pwd (Print Working Directory) affiche le chemin absolu du répertoire courant."
+  category: "filesystem"
+  difficulty: "facile"
+  question_type: "single"
+  points: 1
+  tags:
+    - "commandes"
+    - "navigation"
+  reference: "man pwd"
+
+- id: "fs_003"
+  question: "Quelle commande permet de créer un nouveau répertoire ?"
+  options:
+    - "mkdir"
+    - "mkfolder"
+    - "newdir"
+    - "createdir"
+  correct_answers:
+    - "mkdir"
+  explanation: "mkdir (make directory) crée un nouveau répertoire."
+  category: "filesystem"
+  difficulty: "facile"
+  question_type: "single"
+  points: 1
+  tags:
+    - "commandes"
+    - "création"
+  reference: "man mkdir"
+
+- id: "fs_004"
+  question: "Quelle commande copie des fichiers ?"
+  options:
+    - "cp"
+    - "copy"
+    - "mv"
+    - "cpy"
+  correct_answers:
+    - "cp"
+  explanation: "cp (copy) permet de copier des fichiers ou des répertoires."
+  category: "filesystem"
+  difficulty: "facile"
+  question_type: "single"
+  points: 1
+  tags:
+    - "commandes"
+    - "manipulation"
+  reference: "man cp"
+
+- id: "fs_005"
+  question: "Quelle commande déplace ou renomme des fichiers ?"
+  options:
+    - "mv"
+    - "move"
+    - "ren"
+    - "rename"
+  correct_answers:
+    - "mv"
+  explanation: "mv (move) déplace ou renomme des fichiers et répertoires."
+  category: "filesystem"
+  difficulty: "facile"
+  question_type: "single"
+  points: 1
+  tags:
+    - "commandes"
+    - "manipulation"
+  reference: "man mv"
+
+- id: "fs_006"
+  question: "Quelle commande supprime des fichiers ?"
+  options:
+    - "rm"
+    - "del"
+    - "delete"
+    - "remove"
+  correct_answers:
+    - "rm"
+  explanation: "rm (remove) supprime des fichiers ou des répertoires."
+  category: "filesystem"
+  difficulty: "facile"
+  question_type: "single"
+  points: 1
+  tags:
+    - "commandes"
+    - "suppression"
+  reference: "man rm"
+
+- id: "fs_007"
+  question: "Que signifie le caractère '~' dans un chemin Linux ?"
+  options:
+    - "Le répertoire personnel de l'utilisateur"
+    - "Le répertoire racine"
+    - "Le répertoire parent"
+    - "Le répertoire temporaire"
+  correct_answers:
+    - "Le répertoire personnel de l'utilisateur"
+  explanation: "Le tilde ~ représente le répertoire home de l'utilisateur actuel."
+  category: "filesystem"
+  difficulty: "facile"
+  question_type: "single"
+  points: 1
+  tags:
+    - "navigation"
+    - "chemins"
+
+- id: "fs_008"
+  question: "Quelle commande affiche le contenu d'un fichier texte ?"
+  options:
+    - "cat"
+    - "show"
+    - "display"
+    - "view"
+  correct_answers:
+    - "cat"
+  explanation: "cat (concatenate) affiche le contenu d'un ou plusieurs fichiers."
+  category: "filesystem"
+  difficulty: "facile"
+  question_type: "single"
+  points: 1
+  tags:
+    - "commandes"
+    - "lecture"
+  reference: "man cat"
+
+- id: "fs_009"
+  question: "Quelle commande recherche des fichiers dans le système ?"
+  options:
+    - "find"
+    - "search"
+    - "locate"
+    - "where"
+  correct_answers:
+    - "find"
+  explanation: "find recherche des fichiers dans une hiérarchie de répertoires selon des critères."
+  hint: "Elle parcourt l'arborescence en temps réel"
+  category: "filesystem"
+  difficulty: "facile"
+  question_type: "single"
+  points: 1
+  tags:
+    - "commandes"
+    - "recherche"
+  reference: "man find"
+
+- id: "fs_010"
+  question: "Que représente le répertoire /etc sous Linux ?"
+  options:
+    - "Fichiers de configuration système"
+    - "Fichiers temporaires"
+    - "Fichiers utilisateur"
+    - "Fichiers exécutables"
+  correct_answers:
+    - "Fichiers de configuration système"
+  explanation: "/etc contient les fichiers de configuration du système et des applications."
+  category: "filesystem"
+  difficulty: "facile"
+  question_type: "single"
+  points: 1
+  tags:
+    - "système"
+    - "arborescence"
+
+# Questions moyennes (2 points)
+- id: "fs_011"
+  question: "Quelles options de la commande ls permettent d'afficher les fichiers cachés et les détails ?"
+  options:
+    - "-a (all)"
+    - "-l (long format)"
+    - "-h (human readable)"
+    - "-d (directory)"
+  correct_answers:
+    - "-a (all)"
+    - "-l (long format)"
+  explanation: "-a affiche tous les fichiers (y compris cachés commençant par .), -l affiche les détails."
+  category: "filesystem"
+  difficulty: "moyen"
+  question_type: "multiple"
+  points: 2
+  tags:
+    - "options"
+    - "commandes"
+  reference: "man ls"
+
+- id: "fs_012"
+  question: "Quelle commande crée une copie de sauvegarde d'un fichier important.txt ?"
+  options:
+    - "cp important.txt important.txt.bak"
+    - "mv important.txt important.txt.bak"
+    - "backup important.txt"
+    - "save important.txt"
+  correct_answers:
+    - "cp important.txt important.txt.bak"
+  explanation: "cp copie le fichier en gardant l'original, mv le déplacerait/renommerait."
+  category: "filesystem"
+  difficulty: "moyen"
+  question_type: "single"
+  points: 2
+  tags:
+    - "manipulation"
+    - "sauvegarde"
+
+- id: "fs_013"
+  question: "Quelles commandes permettent de visualiser un fichier page par page ?"
+  options:
+    - "less"
+    - "more"
+    - "cat"
+    - "view"
+  correct_answers:
+    - "less"
+    - "more"
+  explanation: "less et more permettent de paginer le contenu. less est plus moderne et permet le défilement bidirectionnel."
+  category: "filesystem"
+  difficulty: "moyen"
+  question_type: "multiple"
+  points: 2
+  tags:
+    - "commandes"
+    - "lecture"
+  reference: "man less"
+
+- id: "fs_014"
+  question: "Quelle option de rm permet de supprimer un répertoire non vide ?"
+  options:
+    - "-r (recursive)"
+    - "-f (force)"
+    - "-d (directory)"
+    - "-a (all)"
+  correct_answers:
+    - "-r (recursive)"
+  explanation: "-r ou -R supprime récursivement le répertoire et tout son contenu."
+  hint: "Pensez à la récursivité"
+  category: "filesystem"
+  difficulty: "moyen"
+  question_type: "single"
+  points: 2
+  tags:
+    - "suppression"
+    - "options"
+  reference: "man rm"
+
+- id: "fs_015"
+  question: "Que fait la commande 'chmod 755 script.sh' ?"
+  options:
+    - "rwxr-xr-x : propriétaire tout, groupe et autres lecture+exécution"
+    - "rwxrwxrwx : tous les droits pour tout le monde"
+    - "rw-r--r-- : propriétaire lecture+écriture, autres lecture seule"
+    - "r--r--r-- : lecture seule pour tous"
+  correct_answers:
+    - "rwxr-xr-x : propriétaire tout, groupe et autres lecture+exécution"
+  explanation: "755 = rwxr-xr-x (7=4+2+1, 5=4+1, 5=4+1). Configuration typique pour les scripts."
+  category: "filesystem"
+  difficulty: "moyen"
+  question_type: "single"
+  points: 2
+  tags:
+    - "permissions"
+    - "chmod"
+  reference: "man chmod"
+
+- id: "fs_016"
+  question: "Quels répertoires contiennent généralement des fichiers exécutables sous Linux ?"
+  options:
+    - "/bin"
+    - "/usr/bin"
+    - "/etc"
+    - "/var"
+  correct_answers:
+    - "/bin"
+    - "/usr/bin"
+  explanation: "/bin contient les commandes essentielles, /usr/bin les commandes utilisateur standards."
+  category: "filesystem"
+  difficulty: "moyen"
+  question_type: "multiple"
+  points: 2
+  tags:
+    - "arborescence"
+    - "système"
+
+- id: "fs_017"
+  question: "Quelle commande affiche l'utilisation de l'espace disque par répertoire ?"
+  options:
+    - "du"
+    - "df"
+    - "disk"
+    - "space"
+  correct_answers:
+    - "du"
+  explanation: "du (disk usage) affiche l'utilisation de l'espace par fichier/répertoire. df affiche l'espace des systèmes de fichiers."
+  category: "filesystem"
+  difficulty: "moyen"
+  question_type: "single"
+  points: 2
+  tags:
+    - "commandes"
+    - "espace disque"
+  reference: "man du"
+
+- id: "fs_018"
+  question: "Que fait la commande 'ln -s /path/original /path/lien' ?"
+  options:
+    - "Crée un lien symbolique"
+    - "Crée un lien physique"
+    - "Copie le fichier"
+    - "Déplace le fichier"
+  correct_answers:
+    - "Crée un lien symbolique"
+  explanation: "ln -s crée un lien symbolique (raccourci). Sans -s, ln crée un lien physique."
+  category: "filesystem"
+  difficulty: "moyen"
+  question_type: "single"
+  points: 2
+  tags:
+    - "liens"
+    - "commandes"
+  reference: "man ln"
+
+- id: "fs_019"
+  question: "Quelles commandes permettent de rechercher du texte dans des fichiers ?"
+  options:
+    - "grep"
+    - "find"
+    - "search"
+    - "awk"
+  correct_answers:
+    - "grep"
+  explanation: "grep recherche des motifs dans des fichiers texte. find recherche des fichiers, pas du contenu."
+  category: "filesystem"
+  difficulty: "moyen"
+  question_type: "single"
+  points: 2
+  tags:
+    - "recherche"
+    - "commandes"
+  reference: "man grep"
+
+- id: "fs_020"
+  question: "Que représente le répertoire /var sous Linux ?"
+  options:
+    - "Données variables (logs, spool, cache)"
+    - "Variables d'environnement"
+    - "Fichiers variés"
+    - "Répertoire de variation"
+  correct_answers:
+    - "Données variables (logs, spool, cache)"
+  explanation: "/var contient les données qui varient pendant l'exécution du système (logs, mails, caches)."
+  category: "filesystem"
+  difficulty: "moyen"
+  question_type: "single"
+  points: 2
+  tags:
+    - "arborescence"
+    - "système"
+
+# Questions difficiles (3 points)
+- id: "fs_021"
+  question: "Quelles options de find permettent de rechercher des fichiers modifiés dans les 7 derniers jours et de taille supérieure à 100Mo ?"
+  options:
+    - "-mtime -7"
+    - "-size +100M"
+    - "-atime -7"
+    - "-ctime -7"
+  correct_answers:
+    - "-mtime -7"
+    - "-size +100M"
+  explanation: "-mtime -7 = modifiés il y a moins de 7 jours, -size +100M = taille > 100Mo."
+  category: "filesystem"
+  difficulty: "difficile"
+  question_type: "multiple"
+  points: 3
+  tags:
+    - "find"
+    - "options"
+    - "recherche"
+  reference: "man find"
+
+- id: "fs_022"
+  question: "Que fait la commande 'chmod u+s fichier' ?"
+  options:
+    - "Active le bit setuid (SUID)"
+    - "Active le bit setgid (SGID)"
+    - "Active le sticky bit"
+    - "Ajoute les permissions de lecture"
+  correct_answers:
+    - "Active le bit setuid (SUID)"
+  explanation: "u+s active le SUID. Le fichier s'exécutera avec les permissions du propriétaire."
+  category: "filesystem"
+  difficulty: "difficile"
+  question_type: "single"
+  points: 3
+  tags:
+    - "permissions"
+    - "sécurité"
+  reference: "man chmod"
+
+- id: "fs_023"
+  question: "Quelles commandes permettent de compresser des fichiers sous Linux ?"
+  options:
+    - "gzip"
+    - "bzip2"
+    - "xz"
+    - "compress"
+  correct_answers:
+    - "gzip"
+    - "bzip2"
+    - "xz"
+  explanation: "gzip, bzip2 et xz sont les principaux outils de compression sous Linux."
+  category: "filesystem"
+  difficulty: "difficile"
+  question_type: "multiple"
+  points: 3
+  tags:
+    - "compression"
+    - "commandes"
+
+- id: "fs_024"
+  question: "Que fait la commande 'rsync -avz source/ user@host:/dest/' ?"
+  options:
+    - "Synchronise des fichiers vers un serveur distant"
+    - "Copie simple de fichiers"
+    - "Sauvegarde locale uniquement"
+    - "Déplace des fichiers"
+  correct_answers:
+    - "Synchronise des fichiers vers un serveur distant"
+  explanation: "rsync synchronise efficacement. -a=archive, -v=verbose, -z=compression."
+  category: "filesystem"
+  difficulty: "difficile"
+  question_type: "single"
+  points: 3
+  tags:
+    - "synchronisation"
+    - "réseau"
+  reference: "man rsync"
+
+- id: "fs_025"
+  question: "Quels sont les 3 timestamps associés à un fichier Linux ?"
+  options:
+    - "atime (access time)"
+    - "mtime (modification time)"
+    - "ctime (change time)"
+    - "dtime (deletion time)"
+  correct_answers:
+    - "atime (access time)"
+    - "mtime (modification time)"
+    - "ctime (change time)"
+  explanation: "atime=dernier accès, mtime=dernière modification contenu, ctime=dernier changement métadonnées."
+  category: "filesystem"
+  difficulty: "difficile"
+  question_type: "multiple"
+  points: 3
+  tags:
+    - "métadonnées"
+    - "système"
+
+- id: "fs_026"
+  question: "Que fait la commande 'umask 022' ?"
+  options:
+    - "Définit les permissions par défaut : 755 pour répertoires, 644 pour fichiers"
+    - "Définit les permissions par défaut : 777 pour tout"
+    - "Masque tous les fichiers"
+    - "Change le propriétaire"
+  correct_answers:
+    - "Définit les permissions par défaut : 755 pour répertoires, 644 pour fichiers"
+  explanation: "umask 022 soustrait 022 des permissions par défaut (777-022=755 pour dirs, 666-022=644 pour fichiers)."
+  category: "filesystem"
+  difficulty: "difficile"
+  question_type: "single"
+  points: 3
+  tags:
+    - "permissions"
+    - "umask"
+  reference: "man umask"
+
+- id: "fs_027"
+  question: "Quelles options de tar permettent de créer une archive compressée avec gzip ?"
+  options:
+    - "-c (create)"
+    - "-z (gzip)"
+    - "-v (verbose)"
+    - "-x (extract)"
+  correct_answers:
+    - "-c (create)"
+    - "-z (gzip)"
+  explanation: "tar -czf archive.tar.gz dossier/ crée une archive compressée. -c=créer, -z=gzip."
+  category: "filesystem"
+  difficulty: "difficile"
+  question_type: "multiple"
+  points: 3
+  tags:
+    - "archivage"
+    - "compression"
+  reference: "man tar"
+
+- id: "fs_028"
+  question: "Que fait la commande 'chattr +i fichier' ?"
+  options:
+    - "Rend le fichier immuable (non modifiable, même par root)"
+    - "Change le propriétaire"
+    - "Rend le fichier invisible"
+    - "Change les permissions"
+  correct_answers:
+    - "Rend le fichier immuable (non modifiable, même par root)"
+  explanation: "L'attribut +i (immutable) empêche toute modification, suppression ou renommage du fichier."
+  category: "filesystem"
+  difficulty: "difficile"
+  question_type: "single"
+  points: 3
+  tags:
+    - "attributs"
+    - "sécurité"
+  reference: "man chattr"
+
+- id: "fs_029"
+  question: "Quels sont les types d'inodes indiqués par la première lettre dans 'ls -l' ?"
+  options:
+    - "- (fichier régulier)"
+    - "d (répertoire)"
+    - "l (lien symbolique)"
+    - "b (périphérique bloc)"
+  correct_answers:
+    - "- (fichier régulier)"
+    - "d (répertoire)"
+    - "l (lien symbolique)"
+    - "b (périphérique bloc)"
+  explanation: "Tous sont corrects. Autres types : c (caractère), p (pipe), s (socket)."
+  category: "filesystem"
+  difficulty: "difficile"
+  question_type: "multiple"
+  points: 3
+  tags:
+    - "inodes"
+    - "types"
+
+- id: "fs_030"
+  question: "Que fait la commande 'find / -name '*.log' -mtime +30 -exec rm {} \\;' ?"
+  options:
+    - "Recherche et supprime les fichiers .log modifiés il y a plus de 30 jours"
+    - "Recherche les fichiers .log récents"
+    - "Archive les fichiers .log"
+    - "Affiche les fichiers .log"
+  correct_answers:
+    - "Recherche et supprime les fichiers .log modifiés il y a plus de 30 jours"
+  explanation: "find localise les .log anciens, -exec rm {} \\; exécute rm sur chaque fichier trouvé."
+  hint: "Attention à l'utilisation en production !"
+  category: "filesystem"
+  difficulty: "difficile"
+  question_type: "single"
+  points: 3
+  tags:
+    - "find"
+    - "automation"
+    - "maintenance"
+  reference: "man find"

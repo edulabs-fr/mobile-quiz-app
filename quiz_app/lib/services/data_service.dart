@@ -90,9 +90,8 @@ class DataService {
     // Pour le MVP, nous retournons uniquement les catégories qui ont des fichiers
     final List<String> allCategories = [
       'user_management',
-      // 'filesystem',      // À ajouter plus tard
-      // 'networking',      // À ajouter plus tard
-      // 'security',        // À ajouter plus tard
+      'filesystem',
+      'service',
     ];
     
     // Filtrer pour ne garder que celles qui ont des questions

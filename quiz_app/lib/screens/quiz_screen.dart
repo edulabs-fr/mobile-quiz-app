@@ -262,11 +262,6 @@ class _QuizScreenState extends State<QuizScreen> {
                                   backgroundColor: Colors.blue.shade100,
                                 ),
                               Chip(
-                                label: Text('${question.points} pts'),
-                                avatar: const Icon(Icons.star, size: 16),
-                                backgroundColor: Colors.amber.shade100,
-                              ),
-                              Chip(
                                 label: Text(question.difficulty),
                                 avatar: Icon(
                                   question.difficulty == 'facile'
@@ -458,7 +453,7 @@ class _QuizScreenState extends State<QuizScreen> {
                     child: FilledButton(
                       onPressed: _nextQuestion,
                       child: Text(
-                        quizEngine!.isQuizFinished()
+                        quizEngine!.isLastQuestion()
                             ? 'Voir les résultats'
                             : 'Question suivante',
                       ),
@@ -480,60 +475,197 @@ class _QuizScreenState extends State<QuizScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Résultats'),
-      ),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                score >= 80
-                    ? Icons.celebration
-                    : score >= 60
-                        ? Icons.thumb_up
-                        : Icons.trending_up,
-                size: 100,
-                color: score >= 80
-                    ? Colors.green
-                    : score >= 60
-                        ? Colors.orange
-                        : Colors.red,
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'Quiz terminé !',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              const SizedBox(height: 32),
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    children: [
-                      Text(
-                        '${score.toStringAsFixed(1)}%',
-                        style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        '${quizEngine!.correctAnswers} / ${quizEngine!.getTotalQuestions()} correctes',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Temps moyen : ${avgTime.toStringAsFixed(1)}s/question',
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                    ],
+        actions: [
+          // Bouton pour effacer tout l'historique
+          IconButton(
+            icon: const Icon(Icons.delete_sweep),
+            tooltip: 'Effacer tout l\'historique',
+            onPressed: () async {
+              final confirmed = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Confirmer la suppression'),
+                  content: const Text(
+                    'Voulez-vous effacer tout l\'historique des quiz ? '
+                    'Cette action est irréversible.',
                   ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: const Text('Annuler'),
+                    ),
+                    FilledButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      child: const Text('Effacer'),
+                    ),
+                  ],
                 ),
+              );
+              
+              if (confirmed == true) {
+                await StorageService.clearAllResults();
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Historique effacé'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                }
+              }
+            },
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Score global
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                children: [
+                  Icon(
+                    score >= 80
+                        ? Icons.celebration
+                        : score >= 60
+                            ? Icons.thumb_up
+                            : Icons.trending_up,
+                    size: 100,
+                    color: score >= 80
+                        ? Colors.green
+                        : score >= 60
+                            ? Colors.orange
+                            : Colors.red,
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Quiz terminé !',
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                  const SizedBox(height: 32),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        children: [
+                          Text(
+                            '${score.toStringAsFixed(1)}%',
+                            style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            '${quizEngine!.correctAnswers} / ${quizEngine!.getTotalQuestions()} correctes',
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Temps moyen : ${avgTime.toStringAsFixed(1)}s/question',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 32),
-              FilledButton.icon(
+            ),
+
+            // Détail de toutes les questions
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'Détail des questions',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 16),
+                  ...quizEngine!.currentQuestions.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final question = entry.value;
+                    final wasCorrect = index < quizEngine!.correctAnswers + quizEngine!.incorrectAnswers;
+                    
+                    return Card(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      child: ExpansionTile(
+                        leading: CircleAvatar(
+                          backgroundColor: wasCorrect && quizEngine!.correctAnswers > 0
+                              ? Colors.green.withOpacity(0.2)
+                              : Colors.red.withOpacity(0.2),
+                          child: Text(
+                            '${index + 1}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: wasCorrect && quizEngine!.correctAnswers > 0
+                                  ? Colors.green
+                                  : Colors.red,
+                            ),
+                          ),
+                        ),
+                        title: Text(
+                          question.question,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Réponse(s) correcte(s) :',
+                                  style: Theme.of(context).textTheme.titleSmall,
+                                ),
+                                const SizedBox(height: 8),
+                                ...question.correctAnswers.map((answer) => Padding(
+                                      padding: const EdgeInsets.only(bottom: 4),
+                                      child: Row(
+                                        children: [
+                                          const Icon(Icons.check_circle,
+                                              color: Colors.green, size: 16),
+                                          const SizedBox(width: 8),
+                                          Expanded(child: Text(answer)),
+                                        ],
+                                      ),
+                                    )),
+                                const SizedBox(height: 12),
+                                Text(
+                                  'Explication :',
+                                  style: Theme.of(context).textTheme.titleSmall,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(question.explanation),
+                                if (question.reference != null) ...[
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    'Référence : ${question.reference}',
+                                    style: TextStyle(
+                                      fontStyle: FontStyle.italic,
+                                      color: Colors.blue.shade700,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+                ],
+              ),
+            ),
+
+            // Boutons
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: FilledButton.icon(
                 onPressed: () {
                   setState(() {
                     isQuizActive = false;
@@ -545,8 +677,8 @@ class _QuizScreenState extends State<QuizScreen> {
                 icon: const Icon(Icons.home),
                 label: const Text('Retour à l\'accueil'),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -604,7 +736,8 @@ class _QuizScreenState extends State<QuizScreen> {
 
   /// Passer à la question suivante
   Future<void> _nextQuestion() async {
-    if (quizEngine!.isQuizFinished()) {
+    // Si c'est la dernière question, on sauvegarde et on affiche les résultats
+    if (quizEngine!.isLastQuestion()) {
       // Sauvegarder le résultat
       final result = QuizResult(
         id: QuizResult.generateId(),
@@ -617,10 +750,14 @@ class _QuizScreenState extends State<QuizScreen> {
       );
       await StorageService.saveQuizResult(result);
       
+      // Passer à l'état "fini" pour que isQuizFinished devienne vrai
+      quizEngine!.nextQuestion();
+
       setState(() {
-        // Force rebuild pour afficher les résultats
+        // On ne réinitialise rien ici, on laisse _buildResultView s'afficher
       });
     } else {
+      // Continuer avec la question suivante
       quizEngine!.nextQuestion();
       setState(() {
         selectedAnswers.clear();
