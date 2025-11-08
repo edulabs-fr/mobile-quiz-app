@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'quiz_screen.dart';
 import 'flashcards_screen.dart';
 import 'progress_screen.dart';
+import 'quick_revision_screen.dart';
 
 /// Écran d'accueil avec navigation principale
 class HomeScreen extends StatefulWidget {
@@ -18,6 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   static const List<Widget> _screens = [
     QuizScreen(),
     FlashcardsScreen(),
+    QuickRevisionScreen(),
     ProgressScreen(),
   ];
 
@@ -44,6 +46,11 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(Icons.style_outlined),
             selectedIcon: Icon(Icons.style),
             label: 'Flashcards',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.bookmark_outlined),
+            selectedIcon: Icon(Icons.bookmark),
+            label: 'Révision',
           ),
           NavigationDestination(
             icon: Icon(Icons.insights_outlined),

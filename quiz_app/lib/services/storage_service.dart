@@ -107,7 +107,7 @@ class StorageService {
 
   /// Effacer tout l'historique des résultats
   static Future<void> clearAllResults() async {
-    final box = Hive.box(_resultsBox);
+    final box = Hive.box<QuizResult>(_resultsBox);
     await box.clear();
   }
 

@@ -21,6 +21,40 @@ class _ProgressScreenState extends State<ProgressScreen> {
     });
   }
 
+  void _resetProgress() {
+    showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Réinitialiser l\'historique'),
+        content: const Text(
+          'Êtes-vous sûr ? Cette action supprimera tout votre historique de quiz. '
+          'Cette action est irréversible.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Annuler'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Supprimer'),
+          ),
+        ],
+      ),
+    ).then((confirmed) {
+      if (confirmed == true) {
+        StorageService.clearAllResults();
+        _refreshData();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Historique supprimé'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    });
+  }
+
   Future<Map<String, dynamic>> _loadProgressData() async {
     final results = StorageService.getAllResults();
     final averageScore = StorageService.getAverageScore();
@@ -42,6 +76,11 @@ class _ProgressScreenState extends State<ProgressScreen> {
             icon: const Icon(Icons.refresh),
             tooltip: 'Rafraîchir',
             onPressed: _refreshData,
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete_outline),
+            tooltip: 'Réinitialiser l\'historique',
+            onPressed: _resetProgress,
           ),
         ],
       ),

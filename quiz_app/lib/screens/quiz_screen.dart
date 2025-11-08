@@ -3,6 +3,7 @@ import '../services/data_service.dart';
 import '../services/quiz_engine.dart';
 import '../services/storage_service.dart';
 import '../models/quiz_result.dart';
+import '../models/question.dart';
 
 /// Écran principal du Quiz
 class QuizScreen extends StatefulWidget {
@@ -13,7 +14,7 @@ class QuizScreen extends StatefulWidget {
 }
 
 class _QuizScreenState extends State<QuizScreen> {
-  String? selectedCategory;
+  Set<String> selectedCategories = {}; // Changé en Set pour sélection multiple
   int? selectedQuestionCount;
   QuizEngine? quizEngine;
   bool isQuizActive = false;
@@ -113,30 +114,38 @@ class _QuizScreenState extends State<QuizScreen> {
 
                 // Sélection de catégorie
                 Text(
-                  'Sélectionnez une catégorie',
+                  'Sélectionnez une ou plusieurs catégories',
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: 12),
                 ...categories.map((category) {
                   final questionCount = categoryQuestionCounts[category] ?? 0;
+                  final isSelected = selectedCategories.contains(category);
+                  
                   return Card(
                     margin: const EdgeInsets.only(bottom: 8),
-                    child: RadioListTile<String>(
-                      title: Text(_formatCategoryName(category)),
-                      subtitle: Text(
-                        '$questionCount question${questionCount > 1 ? 's' : ''} disponible${questionCount > 1 ? 's' : ''}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey.shade600,
-                        ),
-                      ),
-                      value: category,
-                      groupValue: selectedCategory,
+                    child: CheckboxListTile(
+                      value: isSelected,
                       onChanged: (value) {
                         setState(() {
-                          selectedCategory = value;
+                          if (value == true) {
+                            selectedCategories.add(category);
+                          } else {
+                            selectedCategories.remove(category);
+                          }
                         });
                       },
+                      title: Text(
+                        _formatCategoryName(category),
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                      subtitle: Text(
+                        '$questionCount question${questionCount > 1 ? 's' : ''} disponible${questionCount > 1 ? 's' : ''}',
+                        style: const TextStyle(fontSize: 13),
+                      ),
+                      activeColor: const Color(0xFFEE0000), // Red Hat Red
+                      checkColor: Colors.white,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     ),
                   );
                 }),
@@ -149,13 +158,15 @@ class _QuizScreenState extends State<QuizScreen> {
                 ),
                 const SizedBox(height: 12),
                 ...questionCounts.map((count) {
-                  final totalAvailable = selectedCategory != null 
-                      ? (categoryQuestionCounts[selectedCategory] ?? 0) 
-                      : 0;
+                  // Calculer le total disponible de toutes les catégories sélectionnées
+                  int totalAvailable = 0;
+                  for (final category in selectedCategories) {
+                    totalAvailable += categoryQuestionCounts[category] ?? 0;
+                  }
                   
                   // Si "Toutes" est sélectionné (count = -1), afficher le nombre total
                   final displayText = count == -1 
-                      ? 'Toutes ($totalAvailable questions)'
+                      ? 'Toutes questions ($totalAvailable)'
                       : '$count questions';
                   
                   // Désactiver l'option si elle dépasse le nombre disponible
@@ -165,7 +176,6 @@ class _QuizScreenState extends State<QuizScreen> {
                     margin: const EdgeInsets.only(bottom: 8),
                     color: isEnabled ? null : Colors.grey.shade200,
                     child: RadioListTile<int>(
-                      title: Text(displayText),
                       value: count,
                       groupValue: selectedQuestionCount,
                       onChanged: isEnabled ? (value) {
@@ -173,6 +183,12 @@ class _QuizScreenState extends State<QuizScreen> {
                           selectedQuestionCount = value;
                         });
                       } : null,
+                      title: Text(
+                        displayText,
+                        style: const TextStyle(fontWeight: FontWeight.w500),
+                      ),
+                      activeColor: const Color(0xFFEE0000), // Red Hat Red
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     ),
                   );
                 }),
@@ -180,7 +196,7 @@ class _QuizScreenState extends State<QuizScreen> {
 
                 // Bouton Démarrer
                 FilledButton.icon(
-                  onPressed: selectedCategory != null &&
+                  onPressed: selectedCategories.isNotEmpty &&
                           selectedQuestionCount != null
                       ? _startQuiz
                       : null,
@@ -245,9 +261,31 @@ class _QuizScreenState extends State<QuizScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            question.question,
-                            style: Theme.of(context).textTheme.headlineSmall,
+                          // Titre et bouton de marquage
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  question.question,
+                                  style: Theme.of(context).textTheme.headlineSmall,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              IconButton(
+                                icon: Icon(
+                                  StorageService.isQuestionMarked(question.id)
+                                      ? Icons.bookmark
+                                      : Icons.bookmark_outline,
+                                  color: Colors.orange,
+                                ),
+                                onPressed: () async {
+                                  await StorageService.toggleMarkedQuestion(question);
+                                  setState(() {});
+                                },
+                                tooltip: 'Marquer cette question',
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 12),
                           // Métadonnées de la question
@@ -686,16 +724,21 @@ class _QuizScreenState extends State<QuizScreen> {
 
   /// Démarrer le quiz
   Future<void> _startQuiz() async {
-    if (selectedCategory == null || selectedQuestionCount == null) return;
+    if (selectedCategories.isEmpty || selectedQuestionCount == null) return;
 
-    // Charger les questions
-    final questions = await DataService.loadQuestions(selectedCategory!);
+    // Charger les questions de toutes les catégories sélectionnées
+    List<Question> allQuestions = [];
+    
+    for (final category in selectedCategories) {
+      final questions = await DataService.loadQuestions(category);
+      allQuestions.addAll(questions);
+    }
 
-    if (questions.isEmpty) {
+    if (allQuestions.isEmpty) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Aucune question disponible pour cette catégorie'),
+            content: Text('Aucune question disponible pour les catégories sélectionnées'),
           ),
         );
       }
@@ -708,7 +751,7 @@ class _QuizScreenState extends State<QuizScreen> {
         : selectedQuestionCount;
 
     setState(() {
-      quizEngine = QuizEngine(questions);
+      quizEngine = QuizEngine(allQuestions);
       quizEngine!.initializeQuiz(numberOfQuestions: numberOfQuestions);
       isQuizActive = true;
       selectedAnswers.clear();
@@ -739,10 +782,11 @@ class _QuizScreenState extends State<QuizScreen> {
     // Si c'est la dernière question, on sauvegarde et on affiche les résultats
     if (quizEngine!.isLastQuestion()) {
       // Sauvegarder le résultat
+      final categoriesName = selectedCategories.join(', ');
       final result = QuizResult(
         id: QuizResult.generateId(),
         date: DateTime.now(),
-        category: selectedCategory!,
+        category: categoriesName,
         questionsTotal: quizEngine!.getTotalQuestions(),
         correct: quizEngine!.correctAnswers,
         incorrect: quizEngine!.incorrectAnswers,
