@@ -214,3 +214,21 @@ Projet éducatif open-source.
 
 **Développé avec ❤️ et Flutter**
 
+
+# Voir les appareils disponibles
+~/flutter/bin/flutter devices
+
+# Lancer avec le mode hot reload
+~/flutter/bin/flutter run -d linux
+
+# Construire une version release (plus rapide)
+~/flutter/bin/flutter build linux --release
+
+# Nettoyer et relancer
+~/flutter/bin/flutter clean
+~/flutter/bin/flutter run -d linux
+
+
+flutter build apk --release --verbose
+
+
