@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../services/storage_service.dart';
+import '../services/data_service.dart';
+import '../models/question.dart';
+import 'quiz_screen.dart';
 
 /// Écran pour afficher et gérer les questions échouées
 class FailedQuestionsScreen extends StatefulWidget {
@@ -74,15 +77,38 @@ class _FailedQuestionsScreenState extends State<FailedQuestionsScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                // Bouton Réviser
-                if (selectedQuestionIds.isNotEmpty)
-                  FilledButton.icon(
-                    onPressed: () => _startRevisionQuiz(),
-                    icon: const Icon(Icons.play_arrow),
-                    label: Text(
-                      'Réviser ${selectedQuestionIds.length} question${selectedQuestionIds.length > 1 ? 's' : ''}',
+                // Boutons d'action
+                Row(
+                  children: [
+                    // Bouton Tout sélectionner
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () => _toggleSelectAll(),
+                        icon: Icon(
+                          _areAllSelected() ? Icons.check_box_outline_blank : Icons.check_box,
+                          size: 18,
+                        ),
+                        label: Text(
+                          _areAllSelected() ? 'Désélectionner' : 'Tout sélectionner',
+                          style: const TextStyle(fontSize: 13),
+                        ),
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: 8),
+                    // Bouton Réviser
+                    if (selectedQuestionIds.isNotEmpty)
+                      Expanded(
+                        child: FilledButton.icon(
+                          onPressed: () => _startRevisionQuiz(),
+                          icon: const Icon(Icons.play_arrow, size: 18),
+                          label: Text(
+                            'Réviser (${selectedQuestionIds.length})',
+                            style: const TextStyle(fontSize: 13),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -112,7 +138,7 @@ class _FailedQuestionsScreenState extends State<FailedQuestionsScreen> {
     final failedQuestions = StorageService.getFailedQuestions();
 
     // Appliquer les filtres
-    var filtered = failedQuestions.where((q) {
+    final filtered = failedQuestions.where((q) {
       if (selectedCategory != null && q['category'] != selectedCategory) {
         return false;
       }
@@ -371,13 +397,114 @@ class _FailedQuestionsScreenState extends State<FailedQuestionsScreen> {
     );
   }
 
-  void _startRevisionQuiz() {
-    // TODO: Implémenter le quiz de révision avec les questions sélectionnées
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Quiz de révision avec ${selectedQuestionIds.length} question(s) - À venir !'),
+  void _startRevisionQuiz() async {
+    // Récupérer toutes les questions échouées
+    final failedQuestions = StorageService.getFailedQuestions();
+    
+    // Appliquer les filtres comme dans _buildFailedQuestionsList
+    final filtered = failedQuestions.where((q) {
+      if (selectedCategory != null && q['category'] != selectedCategory) {
+        return false;
+      }
+      if (selectedDifficulty != null && q['difficulty'] != selectedDifficulty) {
+        return false;
+      }
+      return true;
+    }).toList();
+    
+    // Récupérer les questions sélectionnées
+    final selectedQuestions = filtered
+        .where((q) => selectedQuestionIds.contains(q['questionId']))
+        .toList();
+
+    if (selectedQuestions.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Aucune question sélectionnée')),
+      );
+      return;
+    }
+
+    // Créer une liste de Question à partir des failed questions
+    final questions = <Question>[];
+    
+    for (final fq in selectedQuestions) {
+      // Récupérer la question complète depuis DataService pour avoir les réponses
+      final category = fq['category'];
+      final allQuestions = await DataService.loadQuestions(category);
+      final fullQuestion = allQuestions.firstWhere(
+        (q) => q.id == fq['questionId'],
+        orElse: () => Question(
+          id: fq['questionId'],
+          question: fq['question'],
+          options: ['Erreur de chargement'],
+          correctAnswers: List<String>.from(fq['correctAnswers']),
+          explanation: '',
+          category: category,
+          difficulty: fq['difficulty'],
+        ),
+      );
+      questions.add(fullQuestion);
+    }
+
+    // Naviguer vers l'écran de quiz avec ces questions
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => QuizScreen(
+          revisionQuestions: questions,
+        ),
       ),
-    );
+    ).then((_) {
+      // Recharger les erreurs après le quiz
+      setState(() {
+        selectedQuestionIds.clear();
+      });
+    });
+  }
+
+  bool _areAllSelected() {
+    // Récupérer les questions filtrées
+    final failedQuestions = StorageService.getFailedQuestions();
+    final filtered = failedQuestions.where((q) {
+      if (selectedCategory != null && q['category'] != selectedCategory) {
+        return false;
+      }
+      if (selectedDifficulty != null && q['difficulty'] != selectedDifficulty) {
+        return false;
+      }
+      return true;
+    }).toList();
+    
+    final visibleQuestionIds = filtered.map((q) => q['questionId'] as String).toSet();
+    return visibleQuestionIds.isNotEmpty && 
+           visibleQuestionIds.every((id) => selectedQuestionIds.contains(id));
+  }
+
+  void _toggleSelectAll() {
+    // Récupérer les questions filtrées
+    final failedQuestions = StorageService.getFailedQuestions();
+    final filtered = failedQuestions.where((q) {
+      if (selectedCategory != null && q['category'] != selectedCategory) {
+        return false;
+      }
+      if (selectedDifficulty != null && q['difficulty'] != selectedDifficulty) {
+        return false;
+      }
+      return true;
+    }).toList();
+    
+    setState(() {
+      if (_areAllSelected()) {
+        // Désélectionner toutes les questions visibles
+        final visibleQuestionIds = filtered.map((q) => q['questionId'] as String).toSet();
+        selectedQuestionIds.removeAll(visibleQuestionIds);
+      } else {
+        // Sélectionner toutes les questions visibles
+        selectedQuestionIds.addAll(
+          filtered.map((q) => q['questionId'] as String)
+        );
+      }
+    });
   }
 
   String _formatCategoryName(String category) {

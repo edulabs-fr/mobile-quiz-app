@@ -7,7 +7,12 @@ import '../models/question.dart';
 
 /// Écran principal du Quiz
 class QuizScreen extends StatefulWidget {
-  const QuizScreen({super.key});
+  final List<Question>? revisionQuestions;
+  
+  const QuizScreen({
+    super.key,
+    this.revisionQuestions,
+  });
 
   @override
   State<QuizScreen> createState() => _QuizScreenState();
@@ -37,6 +42,13 @@ class _QuizScreenState extends State<QuizScreen> {
     _scrollController = ScrollController();
     _resultScrollController = ScrollController();
     _categoriesFuture = _loadCategoriesWithCounts(); // Cacher la future une seule fois
+    
+    // Si on a des questions de révision, démarrer le quiz immédiatement
+    if (widget.revisionQuestions != null && widget.revisionQuestions!.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _startRevisionQuiz();
+      });
+    }
   }
 
   @override
@@ -916,21 +928,46 @@ class _QuizScreenState extends State<QuizScreen> {
               padding: const EdgeInsets.all(24),
               child: FilledButton.icon(
                 onPressed: () {
-                  setState(() {
-                    isQuizActive = false;
-                    quizEngine = null;
-                    selectedAnswers.clear();
-                    showResult = false;
-                  });
+                  // Si c'est un quiz de révision, revenir à l'écran précédent
+                  if (widget.revisionQuestions != null) {
+                    Navigator.pop(context);
+                  } else {
+                    // Sinon, revenir à l'écran de configuration
+                    setState(() {
+                      isQuizActive = false;
+                      quizEngine = null;
+                      selectedAnswers.clear();
+                      showResult = false;
+                    });
+                  }
                 },
                 icon: const Icon(Icons.home),
-                label: const Text('Retour à l\'accueil'),
+                label: Text(
+                  widget.revisionQuestions != null 
+                    ? 'Retour à la révision' 
+                    : 'Retour à l\'accueil'
+                ),
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  /// Démarrer un quiz de révision avec des questions prédéfinies
+  void _startRevisionQuiz() {
+    if (widget.revisionQuestions == null || widget.revisionQuestions!.isEmpty) {
+      return;
+    }
+
+    setState(() {
+      quizEngine = QuizEngine(widget.revisionQuestions!);
+      quizEngine!.initializeQuiz(numberOfQuestions: widget.revisionQuestions!.length);
+      isQuizActive = true;
+      selectedAnswers.clear();
+      showResult = false;
+    });
   }
 
   /// Démarrer le quiz
