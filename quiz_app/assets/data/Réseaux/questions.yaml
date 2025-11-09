@@ -377,3 +377,39 @@
   - ICMP
   - ping
   - connectivité
+
+# ============ QUESTION AVEC IMAGES - TEST ============
+- id: net_q_img_001
+  question: "🖼️ TEST IMAGES - Observez les images ci-dessous. Quelle est l'architecture réseau représentée au milieu ?"
+  images:
+    - id: "img_net_001_1"
+      label: "Architecture Bus"
+      source: "assets/images/Réseaux/network_bus.png"
+      description: "Les appareils sont connectés en cascade sur un même câble"
+    - id: "img_net_001_2"
+      label: "Architecture Étoile"
+      source: "assets/images/Réseaux/network_star.png"
+      description: "Les appareils sont connectés à un switch central"
+    - id: "img_net_001_3"
+      label: "Architecture Maille (web)"
+      source: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/NetworkTopology-Mesh.png/220px-NetworkTopology-Mesh.png"
+      description: "Chaque appareil connecté à plusieurs autres"
+  options:
+    - "Bus"
+    - "Étoile"
+    - "Maille"
+    - "Anneau"
+  correct_answers:
+    - "Étoile"
+  explanation: "L'architecture en étoile est la plus commune. Tous les appareils se connectent à un switch central."
+  hint: "Regardez l'image du milieu avec le point central"
+  category: Réseaux
+  difficulty: facile
+  question_type: single
+  points: 2
+  tags:
+    - architecture
+    - topologie
+    - images
+    - test
+  reference: https://fr.wikipedia.org/wiki/Topologie_de_réseau

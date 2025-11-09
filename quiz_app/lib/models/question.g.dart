@@ -30,13 +30,14 @@ class QuestionAdapter extends TypeAdapter<Question> {
       points: fields[10] as int,
       tags: (fields[11] as List?)?.cast<String>(),
       reference: fields[12] as String?,
+      images: (fields[13] as List?)?.cast<dynamic>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Question obj) {
     writer
-      ..writeByte(13)
+      ..writeByte(14)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -62,7 +63,9 @@ class QuestionAdapter extends TypeAdapter<Question> {
       ..writeByte(11)
       ..write(obj.tags)
       ..writeByte(12)
-      ..write(obj.reference);
+      ..write(obj.reference)
+      ..writeByte(13)
+      ..write(obj.images);
   }
 
   @override

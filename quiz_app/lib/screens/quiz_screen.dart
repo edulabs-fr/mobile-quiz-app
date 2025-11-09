@@ -33,7 +33,7 @@ class _QuizScreenState extends State<QuizScreen> {
   late Future<Map<String, dynamic>> _categoriesFuture; // Cache la future pour éviter les re-appels
 
   // Les options de nombre de questions
-  final List<int> questionCounts = [10, 30, 50, -1]; // Changé en 10, 30, 50, Toutes
+  final List<int> questionCounts = [10, 30, 50, -1]; // 10, 30, 50, Toutes
   final List<String> difficulties = ['facile', 'moyen', 'difficile'];
 
   @override
@@ -478,6 +478,12 @@ class _QuizScreenState extends State<QuizScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
+
+                  // Afficher les images si présentes
+                  if (question.images != null && question.images!.isNotEmpty) ...[
+                    _buildImagesGallery(question.images!),
+                    const SizedBox(height: 24),
+                  ],
 
                   // Options de réponse
                   ...question.options.asMap().entries.map((entry) {
@@ -1189,5 +1195,211 @@ class _QuizScreenState extends State<QuizScreen> {
         .split('_')
         .map((word) => word[0].toUpperCase() + word.substring(1))
         .join(' ');
+  }
+
+  /// Générer dynamiquement la liste des nombres de questions possibles
+
+  /// Construire la galerie d'images pour une question
+  Widget _buildImagesGallery(List<dynamic> images) {
+    return Card(
+      color: Colors.blue.shade50,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              '📷 Images:',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: images.asMap().entries.map((entry) {
+                final index = entry.key;
+                final image = entry.value;
+                
+                // Extraire le label de la Map
+                final label = (image is Map ? image['label'] as String? : null) ?? 'Image ${index + 1}';
+                
+                return ElevatedButton.icon(
+                  onPressed: () {
+                    _showImageDialog(image, label);
+                  },
+                  icon: const Icon(Icons.image),
+                  label: Text('Image ${index + 1}'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                  ),
+                );
+              }).toList(),
+            ),
+            if (images.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: Text(
+                  'Cliquez sur une image pour voir le schéma',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey.shade600,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Afficher une image en plein écran dans un dialog
+  void _showImageDialog(dynamic imageData, String label) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        String imageSource = '';
+        String imageLabel = label;
+        String? imageDescription;
+        
+        // Extraire les données selon le type
+        if (imageData is Map) {
+          imageSource = imageData['source'] ?? imageData['asset_path'] ?? '';
+          imageLabel = imageData['label'] ?? label;
+          imageDescription = imageData['description'];
+        } else {
+          return const SizedBox.shrink();
+        }
+        
+        // Déterminer le type d'image
+        final isRemote = imageSource.startsWith('http://') || imageSource.startsWith('https://');
+        
+        return Dialog(
+          insetPadding: const EdgeInsets.all(16),
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.8,
+            width: MediaQuery.of(context).size.width * 0.9,
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                // Header avec titre et bouton close
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.shade100,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(12),
+                      topRight: Radius.circular(12),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          imageLabel,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                    ],
+                  ),
+                ),
+                // Image avec gestionnaire d'erreurs
+                Expanded(
+                child: Container(
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.6,
+                    maxWidth: MediaQuery.of(context).size.width * 0.9,
+                  ),
+                  color: Colors.grey.shade100,
+                  child: isRemote
+                      ? Image.network(
+                          imageSource,
+                          fit: BoxFit.contain,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Center(
+                              child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                    : null,
+                              ),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(Icons.broken_image, size: 48, color: Colors.red),
+                                  const SizedBox(height: 12),
+                                  const Text('Image non disponible'),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    imageSource,
+                                    style: const TextStyle(fontSize: 10),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        )
+                      : Image.asset(
+                          imageSource,
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(Icons.broken_image, size: 48, color: Colors.red),
+                                  const SizedBox(height: 12),
+                                  const Text('Image non trouvée'),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    imageSource,
+                                    style: const TextStyle(fontSize: 10),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                ),
+                ),
+                // Description si disponible
+                if (imageDescription != null)
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(
+                      imageDescription,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey.shade700,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }

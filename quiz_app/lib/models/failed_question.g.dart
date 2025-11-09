@@ -1,56 +1,53 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'quiz_result.dart';
+part of 'failed_question.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class QuizResultAdapter extends TypeAdapter<QuizResult> {
+class FailedQuestionAdapter extends TypeAdapter<FailedQuestion> {
   @override
-  final int typeId = 2;
+  final int typeId = 3;
 
   @override
-  QuizResult read(BinaryReader reader) {
+  FailedQuestion read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return QuizResult(
+    return FailedQuestion(
       id: fields[0] as String,
-      date: fields[1] as DateTime,
+      questionId: fields[1] as String,
       category: fields[2] as String,
-      questionsTotal: fields[3] as int,
-      correct: fields[4] as int,
-      incorrect: fields[5] as int,
-      averageTimePerQuestion: fields[6] as double,
-      difficultyStats: fields[7] != null ? (fields[7] as Map).cast<String, dynamic>() : {},
-      difficultiesPresentes: fields[8] != null ? (fields[8] as List).cast<String>() : [],
+      difficulty: fields[3] as String,
+      date: fields[4] as DateTime,
+      failureCount: fields[5] as int,
+      question: fields[6] as String,
+      correctAnswers: (fields[7] as List).cast<String>(),
     );
   }
 
   @override
-  void write(BinaryWriter writer, QuizResult obj) {
+  void write(BinaryWriter writer, FailedQuestion obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.date)
+      ..write(obj.questionId)
       ..writeByte(2)
       ..write(obj.category)
       ..writeByte(3)
-      ..write(obj.questionsTotal)
+      ..write(obj.difficulty)
       ..writeByte(4)
-      ..write(obj.correct)
+      ..write(obj.date)
       ..writeByte(5)
-      ..write(obj.incorrect)
+      ..write(obj.failureCount)
       ..writeByte(6)
-      ..write(obj.averageTimePerQuestion)
+      ..write(obj.question)
       ..writeByte(7)
-      ..write(obj.difficultyStats)
-      ..writeByte(8)
-      ..write(obj.difficultiesPresentes);
+      ..write(obj.correctAnswers);
   }
 
   @override
@@ -59,7 +56,7 @@ class QuizResultAdapter extends TypeAdapter<QuizResult> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is QuizResultAdapter &&
+      other is FailedQuestionAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

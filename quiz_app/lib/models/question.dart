@@ -45,6 +45,9 @@ class Question {
   @HiveField(12)
   final String? reference; // Référence ou lien vers documentation
 
+  @HiveField(13)
+  final List<dynamic>? images; // Images associées à la question (Maps du YAML)
+
   Question({
     required this.id,
     required this.question,
@@ -59,6 +62,7 @@ class Question {
     this.points = 1, // Par défaut 1 point
     this.tags,
     this.reference,
+    this.images,
   });
 
   /// Créer une Question depuis un Map YAML
@@ -68,6 +72,12 @@ class Question {
     // Déterminer automatiquement le type de question
     String questionType = yaml['question_type'] as String? ?? 
         (correctAnswers.length > 1 ? 'multiple' : 'single');
+    
+    // Traiter les images si présentes - garder comme Maps du YAML
+    List<dynamic>? images;
+    if (yaml['images'] != null) {
+      images = yaml['images'] as List<dynamic>;
+    }
     
     return Question(
       id: yaml['id'] as String,
@@ -83,6 +93,7 @@ class Question {
       points: yaml['points'] as int? ?? 1,
       tags: yaml['tags'] != null ? List<String>.from(yaml['tags'] as List) : null,
       reference: yaml['reference'] as String?,
+      images: images,
     );
   }
 
@@ -122,6 +133,7 @@ class Question {
     int? points,
     List<String>? tags,
     String? reference,
+    List<dynamic>? images,
   }) {
     return Question(
       id: id ?? this.id,
@@ -137,6 +149,7 @@ class Question {
       points: points ?? this.points,
       tags: tags ?? this.tags,
       reference: reference ?? this.reference,
+      images: images ?? this.images,
     );
   }
 }
