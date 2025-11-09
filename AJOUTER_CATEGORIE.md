@@ -640,6 +640,50 @@ assets/data/MaCategorie/flashcard.yaml   # sans 's'
 - Appuyez sur `R` dans le terminal Flutter (et pas `r`)
 - Ou relancez complètement l'app : `flutter run`
 
+### Images : fichiers non trouvés
+
+**Cause 6** : Dossier `assets/images/` pas créé ou mal déclaré
+```
+❌ MAUVAIS - Pas dans pubspec.yaml
+assets:
+  - assets/data/MaCategorie/
+
+✅ BON - Ajoutez aussi les images
+assets:
+  - assets/data/MaCategorie/
+  - assets/images/MaCategorie/
+```
+
+**Cause 7** : Chemin image incorrect dans YAML
+```yaml
+# ❌ MAUVAIS - chemin mal écrit
+source: "assets/images/macategorie/image.png"     # minuscule != majuscule
+source: "assets/images/MaCategorie/imagee.png"    # typo dans nom
+
+# ✅ BON - chemin correct
+source: "assets/images/MaCategorie/image.png"
+source: "assets/images/Réseaux/network_star.png"
+```
+
+**Cause 8** : Images distantes (URLs) ne chargent pas
+```yaml
+# ❌ MAUVAIS - URL inaccessible
+source: "https://broken-url.com/image.png"
+
+# ✅ BON - URL valide et accessible
+source: "https://en.wikipedia.org/wiki/image.png"
+source: "https://www.museeinformatique.fr/...image.jpg"
+```
+
+**Cause 9** : Image locale introuvable (fichier YAML)
+```
+✅ Vérifier :
+- Le fichier PNG/JPG existe dans assets/images/MaCategorie/
+- L'extension est correcte (.png, .jpg, pas .PNG ou .JPG)
+- Le nom est exactement le même dans le YAML et le disque
+- Pas de caractères spéciaux ou espaces dans le nom de fichier
+```
+
 ---
 
 ## 📝 Bonnes pratiques
@@ -714,6 +758,7 @@ tags:
 
 ## 🚀 Checklist complète
 
+### Questions et Flashcards
 - [ ] Créer le dossier `assets/data/MaCategorie/`
 - [ ] Créer `questions.yaml` avec au moins 1 question
 - [ ] Créer `flashcards.yaml` avec au least 1 carte
@@ -722,11 +767,24 @@ tags:
 - [ ] Vérifier l'indentation YAML (2 espaces)
 - [ ] Vérifier que tous les champs obligatoires sont présents
 - [ ] Vérifier les noms de catégorie (doivent correspondre exactement)
+
+### Images (optionnel)
+- [ ] ❌ Si pas d'images → passer au test
+- [ ] ✅ Si images locales → Créer dossier `assets/images/MaCategorie/`
+- [ ] ✅ Si images locales → Placer fichiers PNG/JPG (800x600px max)
+- [ ] ✅ Si images locales → Ajouter `- assets/images/MaCategorie/` dans `pubspec.yaml`
+- [ ] ✅ Ajouter champ `images:` dans questions YAML
+- [ ] ✅ Vérifier `source:` pointe vers bon chemin/URL
+- [ ] ✅ Vérifier tous les champs image : `id`, `label`, `source`, `description`
+
+### Test et validation
 - [ ] Hot restart (R) ou relancer l'app
 - [ ] Vérifier dans Quiz que la catégorie apparaît
 - [ ] Vérifier dans Flashcards que la catégorie apparaît
 - [ ] Tester un quiz avec la nouvelle catégorie
 - [ ] Tester les flashcards de la nouvelle catégorie
+- [ ] **Si images** → Tester que les images s'affichent
+- [ ] **Si images** → Tester pinch-to-zoom et double-tap
 
 ---
 
@@ -737,8 +795,21 @@ Si la catégorie n'apparaît toujours pas après avoir suivi toutes les étapes 
 1. Vérifiez les logs Flutter dans le terminal
 2. Vérifiez qu'il n'y a pas d'erreur YAML (indentation, syntaxe)
 3. Vérifiez que le nom du dossier correspond exactement à celui dans `pubspec.yaml`
-4. Essayez un `flutter clean` puis `flutter run`
+4. **Pour images** : Vérifiez le chemin dans YAML et dans `pubspec.yaml`
+5. Essayez un `flutter clean` puis `flutter run`
 
 ---
 
-**✅ C'est tout ! Votre nouvelle catégorie devrait maintenant être disponible dans l'application.**
+## 📚 Documentation complémentaire
+
+Pour plus de détails sur les images :
+- 📖 `IMAGES_LOCAL_REMOTE.md` - Guide complet images
+- 📖 `README_IMAGES.md` - Quick start images
+- 📖 `GUIDE_IMAGE_INTEGRATION.md` - Intégration dans QuizScreen
+- 📖 `assets/data/IMAGE_QUESTIONS_FORMAT.yaml` - Exemples YAML
+
+---
+
+**✅ C'est tout ! Votre nouvelle catégorie avec (ou sans) images devrait maintenant être disponible dans l'application.**
+
+````
