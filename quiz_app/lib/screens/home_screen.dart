@@ -4,6 +4,9 @@ import 'flashcards_screen.dart';
 import 'progress_screen.dart';
 import 'quick_revision_screen.dart';
 
+// Clé globale pour accéder à l'état du QuizScreen
+final quizScreenKey = GlobalKey<State>();
+
 /// Écran d'accueil avec navigation principale
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,19 +17,21 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
-  bool _isQuizActive = false;
 
-  // Liste des écrans
-  static const List<Widget> _screens = [
-    QuizScreen(),
-    FlashcardsScreen(),
-    QuickRevisionScreen(),
-    ProgressScreen(),
+  // Liste des écrans - QuizScreen utilise la clé globale
+  late final List<Widget> _screens = [
+    QuizScreen(key: quizScreenKey),
+    const FlashcardsScreen(),
+    const QuickRevisionScreen(),
+    const ProgressScreen(),
   ];
 
   void _onItemTapped(int index) {
     // Si on est en plein quiz et on clique sur un autre onglet, afficher une confirmation
-    if (_selectedIndex == 0 && _isQuizActive && index != 0) {
+    final quizState = quizScreenKey.currentState;
+    final isQuizActive = (quizState as dynamic)?.isQuizActive ?? false;
+    
+    if (_selectedIndex == 0 && isQuizActive && index != 0) {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -40,9 +45,10 @@ class _HomeScreenState extends State<HomeScreen> {
             FilledButton(
               onPressed: () {
                 Navigator.pop(context);
+                // Quitter le quiz via la méthode du QuizScreen
+                (quizState as dynamic)?.quitQuiz();
                 setState(() {
                   _selectedIndex = index;
-                  _isQuizActive = false;
                 });
               },
               child: const Text('Quitter'),

@@ -68,6 +68,16 @@ class _QuizScreenState extends State<QuizScreen> {
     }
   }
 
+  /// Méthode publique pour quitter le quiz (appelée depuis HomeScreen)
+  void quitQuiz() {
+    setState(() {
+      isQuizActive = false;
+      quizEngine = null;
+      selectedAnswers.clear();
+      showResult = false;
+    });
+  }
+
   /// Vue de configuration du quiz
   Widget _buildSetupView() {
     return Scaffold(
