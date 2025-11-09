@@ -1113,6 +1113,21 @@ class _QuizScreenState extends State<QuizScreen> {
         difficultiesPresentes: difficultiesSet.toList()..sort(),
       );
       await StorageService.saveQuizResult(result);
+
+      // Enregistrer les questions échouées
+      for (final question in quizEngine!.currentQuestions) {
+        final isCorrect = quizEngine!.answerResults[question.id] ?? false;
+        if (!isCorrect) {
+          // La question a été échouée, l'enregistrer
+          await StorageService.saveFailedQuestion(
+            questionId: question.id,
+            category: question.category,
+            difficulty: question.difficulty,
+            question: question.question,
+            correctAnswers: question.correctAnswers,
+          );
+        }
+      }
       
       // Passer à l'état "fini" pour que isQuizFinished devienne vrai
       quizEngine!.nextQuestion();

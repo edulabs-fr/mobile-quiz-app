@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/storage_service.dart';
 import '../models/question.dart';
 import '../theme/redhat_theme.dart';
+import 'failed_questions_screen.dart';
 
 /// Écran de révision rapide avec les questions et flashcards marquées
 class QuickRevisionScreen extends StatefulWidget {
@@ -18,7 +19,7 @@ class _QuickRevisionScreenState extends State<QuickRevisionScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
   }
 
   @override
@@ -46,6 +47,10 @@ class _QuickRevisionScreenState extends State<QuickRevisionScreen>
               icon: Icon(Icons.library_books),
               text: 'Flashcards',
             ),
+            Tab(
+              icon: Icon(Icons.error_outline),
+              text: 'Mes Erreurs',
+            ),
           ],
         ),
       ),
@@ -54,6 +59,7 @@ class _QuickRevisionScreenState extends State<QuickRevisionScreen>
         children: [
           _buildMarkedQuestionsView(),
           _buildMarkedFlashcardsView(),
+          const FailedQuestionsScreen(),
         ],
       ),
     );

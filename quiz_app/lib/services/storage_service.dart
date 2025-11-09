@@ -9,6 +9,7 @@ class StorageService {
   static const String _markedQuestionsBox = 'marked_questions';
   static const String _markedFlashcardsBox = 'marked_flashcards';
   static const String _settingsBox = 'settings';
+  static const String _failedQuestionsBox = 'failed_questions'; // Nouvelles erreurs
 
   /// Initialiser Hive
   static Future<void> initialize() async {
@@ -24,6 +25,7 @@ class StorageService {
     await Hive.openBox<Question>(_markedQuestionsBox);
     await Hive.openBox<Flashcard>(_markedFlashcardsBox);
     await Hive.openBox(_settingsBox);
+    await Hive.openBox(_failedQuestionsBox); // Box pour les erreurs
   }
 
   // ==================== RÉSULTATS DE QUIZ ====================
@@ -220,6 +222,99 @@ class StorageService {
     return box.containsKey(flashcardId);
   }
 
+  // ==================== QUESTIONS ÉCHOUÉES ====================
+
+  /// Sauvegarder une question échouée
+  static Future<void> saveFailedQuestion({
+    required String questionId,
+    required String category,
+    required String difficulty,
+    required String question,
+    required List<String> correctAnswers,
+  }) async {
+    final box = Hive.box(_failedQuestionsBox);
+    
+    // Vérifier si la question existe déjà
+    final existingKey = box.keys.cast<String>().firstWhere(
+      (key) {
+        final data = box.get(key) as Map?;
+        return data?['questionId'] == questionId;
+      },
+      orElse: () => '',
+    );
+
+    if (existingKey.isNotEmpty) {
+      // Question déjà échouée, incrémenter le count
+      final data = box.get(existingKey) as Map;
+      final failureCount = (data['failureCount'] as int? ?? 1) + 1;
+      await box.put(existingKey, {
+        ...data,
+        'failureCount': failureCount,
+        'date': DateTime.now().toIso8601String(),
+      });
+    } else {
+      // Nouvelle erreur
+      await box.put(
+        '${DateTime.now().millisecondsSinceEpoch}',
+        {
+          'questionId': questionId,
+          'category': category,
+          'difficulty': difficulty,
+          'question': question,
+          'correctAnswers': correctAnswers,
+          'date': DateTime.now().toIso8601String(),
+          'failureCount': 1,
+        },
+      );
+    }
+  }
+
+  /// Obtenir toutes les questions échouées
+  static List<Map<String, dynamic>> getFailedQuestions() {
+    final box = Hive.box(_failedQuestionsBox);
+    return box.values.map((v) => Map<String, dynamic>.from(v as Map)).toList();
+  }
+
+  /// Obtenir les questions échouées par catégorie
+  static List<Map<String, dynamic>> getFailedQuestionsByCategory(String category) {
+    final box = Hive.box(_failedQuestionsBox);
+    return box.values
+        .where((v) => (v as Map)['category'] == category)
+        .map((v) => Map<String, dynamic>.from(v as Map))
+        .toList();
+  }
+
+  /// Obtenir les questions échouées par difficulté
+  static List<Map<String, dynamic>> getFailedQuestionsByDifficulty(String difficulty) {
+    final box = Hive.box(_failedQuestionsBox);
+    return box.values
+        .where((v) => (v as Map)['difficulty'] == difficulty)
+        .map((v) => Map<String, dynamic>.from(v as Map))
+        .toList();
+  }
+
+  /// Supprimer une question échouée
+  static Future<void> removeFailedQuestion(String questionId) async {
+    final box = Hive.box(_failedQuestionsBox);
+    final keyToRemove = box.keys.cast<String>().firstWhere(
+      (key) {
+        final data = box.get(key) as Map?;
+        return data?['questionId'] == questionId;
+      },
+      orElse: () => '',
+    );
+    
+    if (keyToRemove.isNotEmpty) {
+      await box.delete(keyToRemove);
+    }
+  }
+
+  /// Effacer toutes les erreurs
+  static Future<void> clearFailedQuestions() async {
+    final box = Hive.box(_failedQuestionsBox);
+    await box.clear();
+  }
+
   // ==================== PARAMÈTRES ====================
 
   /// Sauvegarder un paramètre
@@ -240,5 +335,6 @@ class StorageService {
     await Hive.box<Question>(_markedQuestionsBox).clear();
     await Hive.box<Flashcard>(_markedFlashcardsBox).clear();
     await Hive.box(_settingsBox).clear();
+    await Hive.box(_failedQuestionsBox).clear();
   }
 }
