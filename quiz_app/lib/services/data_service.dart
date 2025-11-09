@@ -92,6 +92,7 @@ class DataService {
       'user_management',
       'filesystem',
       'service',
+      'Réseaux',
     ];
     
     // Filtrer pour ne garder que celles qui ont des questions

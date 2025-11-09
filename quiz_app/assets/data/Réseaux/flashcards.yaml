@@ -1,0 +1,64 @@
+- id: net_f001
+  term: OSI
+  explanation: 'Open Systems Interconnection - Modèle de référence composé de 7 couches
+    pour la communication réseau: Physique, Liaison de données, Réseau, Transport,
+    Session, Présentation, Application.'
+  example: 'Couche 1 (Physique): câbles, hubs. Couche 3 (Réseau): routeurs, IP.'
+  category: Réseaux
+- id: net_f002
+  term: TCP/IP
+  explanation: Transmission Control Protocol / Internet Protocol - Suite de protocoles
+    standards pour la communication internet. TCP assure une transmission fiable (couche
+    4), IP gère l'adressage (couche 3).
+  example: 'TCP: garantit la livraison. UDP: pas de garantie mais plus rapide.'
+  category: Réseaux
+- id: net_f003
+  term: Adresse IP
+  explanation: Identifiant unique pour chaque appareil sur un réseau. IPv4 utilise
+    32 bits (4 octets). IPv6 utilise 128 bits (8 groupes).
+  example: 'IPv4: 192.168.1.1. IPv6: 2001:0db8:85a3:0000:0000:8a2e:0370:7334'
+  category: Réseaux
+- id: net_f004
+  term: DNS
+  explanation: Domain Name System - Protocole qui traduit les noms de domaine en adresses
+    IP. Utilise le port 53.
+  example: 'www.google.com → 142.251.41.14. Query: nslookup google.com'
+  category: Réseaux
+- id: net_f005
+  term: SSH
+  explanation: Secure Shell - Protocole pour l'administration à distance sécurisée.
+    Utilise le port 22 et chiffre les communications.
+  example: ssh user@192.168.1.100. Remplace Telnet (non sécurisé).
+  category: Réseaux
+- id: net_f006
+  term: DHCP
+  explanation: Dynamic Host Configuration Protocol - Protocole qui attribue automatiquement
+    des adresses IP, masques de sous-réseau, passerelles et serveurs DNS aux appareils.
+  example: 'Sans DHCP: configuration manuelle. Avec DHCP: automatique au démarrage.'
+  category: Réseaux
+- id: net_f007
+  term: Masque de sous-réseau
+  explanation: 'Numéro utilisé pour diviser une adresse IP en deux parties: la partie
+    réseau et la partie hôte. Utilise la notation pointée (ex: 255.255.255.0) ou CIDR
+    (ex: /24).'
+  example: 'IP: 192.168.1.100, Masque: 255.255.255.0 → Réseau: 192.168.1.0'
+  category: Réseaux
+- id: net_f008
+  term: Firewall
+  explanation: Système de sécurité qui filtre le trafic réseau selon des règles définies.
+    Peut être logiciel ou matériel.
+  example: Autoriser port 80 et 443. Bloquer port 23 (Telnet). Protéger contre les
+    attaques.
+  category: Réseaux
+- id: net_f009
+  term: VLAN
+  explanation: Virtual Local Area Network - Réseau local virtuel qui segmente logiquement
+    un réseau physique, améliorant la sécurité et la performance.
+  example: 'VLAN 10: Département IT. VLAN 20: Département RH. Isolation du trafic.'
+  category: Réseaux
+- id: net_f010
+  term: Ping (ICMP)
+  explanation: Utility de diagnostic qui utilise ICMP Echo Request pour tester la
+    connectivité réseau et mesurer le délai de réponse (latence).
+  example: 'ping 8.8.8.8 → Réponse: 32 bytes, Time=20ms. Teste la connexion à un serveur.'
+  category: Réseaux

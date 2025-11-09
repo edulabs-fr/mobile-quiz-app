@@ -1,0 +1,76 @@
+# ============================================
+# Questions avec Images - Exemple de format YAML
+# ============================================
+# Format pour les questions avec images intégrées
+# Les images peuvent être locales (assets) ou distantes (URLs)
+
+# ⚠️ IMPORTANT: Dossier structure pour les images
+# assets/images/
+#   ├── user_management/
+#   ├── filesystem/
+#   ├── service/
+#   └── Réseaux/
+
+- id: "img_q001"
+  question: "Observez les schémas ci-dessous. Quel type d'architecture réseau est représentée dans l'image du milieu ?"
+  images:
+    - id: "img_001_1"
+      label: "Architecture Bus"
+      source: "assets/images/Réseaux/network_bus.png"
+      description: "Les appareils sont connectés en cascade sur un même câble"
+    
+    - id: "img_001_2"
+      label: "Architecture Étoile"
+      source: "assets/images/Réseaux/network_star.png"
+      description: "Les appareils sont connectés à un switch/concentrateur central"
+    
+    - id: "img_001_3"
+      label: "Architecture Maille (depuis le web)"
+      source: "https://www.museeinformatique.fr/wp-content/uploads/2022/07/réseau-informatique-1-1024x683.jpg"
+      description: "Chaque appareil est connecté à plusieurs autres"
+  
+  options:
+    - "Bus"
+    - "Étoile"
+    - "Maille"
+    - "Anneau"
+  
+  correct_answers: ["Étoile"]
+  
+  explanation: "L'architecture en étoile est la plus courante dans les réseaux locaux modernes. Elle utilise un switch ou concentrateur central auquel tous les appareils se connectent."
+  
+  hint: "Regardez le schéma du milieu - quel est le point central ?"
+  
+  category: "Réseaux"
+  difficulty: "facile"
+  tags: ["architecture réseau", "topologie", "étoile", "images"]
+  points: 2
+  reference: "https://fr.wikipedia.org/wiki/Topologie_de_réseau"
+
+- id: "img_q002"
+  question: "Identifiez les couches OSI représentées dans le diagramme ci-dessous."
+  images:
+    - id: "img_002_1"
+      label: "Modèle OSI complet"
+      source: "assets/images/Réseaux/osi_model.png"
+      description: "Illustration du modèle OSI avec les 7 couches"
+    
+    - id: "img_002_2"
+      label: "Comparaison TCP/IP"
+      source: "https://example.com/tcp-ip-model.png"
+      description: "Modèle TCP/IP comparé avec OSI"
+  
+  options:
+    - "Couches 1-3"
+    - "Couches 3-5"
+    - "Couches 5-7"
+    - "Couches 1-7"
+  
+  correct_answers: ["Couches 1-7"]
+  
+  explanation: "Le modèle OSI comprend 7 couches du niveau physique au niveau application."
+  
+  category: "Réseaux"
+  difficulty: "moyen"
+  tags: ["modèle OSI", "couches", "images"]
+  points: 3

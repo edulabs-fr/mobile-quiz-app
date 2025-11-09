@@ -1,0 +1,379 @@
+- id: net_q001
+  question: Quel est le modèle de référence pour les réseaux informatiques ?
+  options:
+  - Modèle OSI
+  - Modèle TCP/IP
+  - Modèle ISO
+  - Modèle Ethernet
+  correct_answers:
+  - Modèle OSI
+  explanation: Le modèle OSI (Open Systems Interconnection) est un modèle de référence
+    composé de 7 couches pour la communication entre ordinateurs.
+  hint: 7 couches
+  category: Réseaux
+  difficulty: facile
+  question_type: single
+  points: 1
+  tags:
+  - OSI
+  - modèle
+  - réseau
+  reference: https://en.wikipedia.org/wiki/OSI_model
+- id: net_q002
+  question: Combien de couches le modèle OSI possède-t-il ?
+  options:
+  - '5'
+  - '6'
+  - '7'
+  - '8'
+  correct_answers:
+  - '7'
+  explanation: 'Le modèle OSI possède 7 couches : Physique, Liaison de données, Réseau,
+    Transport, Session, Présentation, Application.'
+  hint: C'est un nombre lucky
+  category: Réseaux
+  difficulty: facile
+  question_type: single
+  points: 1
+  tags:
+  - OSI
+  - couches
+  - modèle
+- id: net_q003
+  question: À quel modèle OSI appartient le protocole TCP/IP ?
+  options:
+  - Couche Physique
+  - Couche Transport
+  - Couche Application
+  - Couche Réseau
+  correct_answers:
+  - Couche Transport
+  explanation: TCP (Transmission Control Protocol) appartient à la couche 4 (Transport)
+    du modèle OSI.
+  category: Réseaux
+  difficulty: moyen
+  question_type: single
+  points: 1
+  tags:
+  - TCP
+  - couche
+  - transport
+- id: net_q004
+  question: Quel protocole appartient à la couche Application du modèle OSI ? (Choix
+    multiple)
+  options:
+  - HTTP
+  - FTP
+  - SSH
+  - IP
+  correct_answers:
+  - HTTP
+  - FTP
+  - SSH
+  explanation: HTTP, FTP et SSH appartiennent à la couche Application (couche 7).
+    IP appartient à la couche Réseau (couche 3).
+  category: Réseaux
+  difficulty: moyen
+  question_type: multiple
+  points: 2
+  tags:
+  - couche application
+  - protocoles
+- id: net_q005
+  question: Quel est le port par défaut pour HTTP ?
+  options:
+  - '80'
+  - '443'
+  - '8080'
+  - '3306'
+  correct_answers:
+  - '80'
+  explanation: Le port 80 est le port par défaut pour HTTP. Le port 443 est utilisé
+    pour HTTPS.
+  hint: C'est un nombre suivi d'un zéro
+  category: Réseaux
+  difficulty: facile
+  question_type: single
+  points: 1
+  tags:
+  - HTTP
+  - port
+  - web
+- id: net_q006
+  question: Quel est le port par défaut pour HTTPS ?
+  options:
+  - '80'
+  - '443'
+  - '8443'
+  - '3306'
+  correct_answers:
+  - '443'
+  explanation: Le port 443 est le port par défaut pour HTTPS (HTTP Secure).
+  category: Réseaux
+  difficulty: facile
+  question_type: single
+  points: 1
+  tags:
+  - HTTPS
+  - port
+  - sécurité
+- id: net_q007
+  question: Qu'est-ce qu'une adresse IP v4 ?
+  options:
+  - 32 bits avec 4 octets
+  - 64 bits avec 8 octets
+  - 128 bits
+  - 256 bits
+  correct_answers:
+  - 32 bits avec 4 octets
+  explanation: 'Une adresse IPv4 est composée de 32 bits divisés en 4 octets, notée
+    en notation pointée (ex: 192.168.1.1).'
+  category: Réseaux
+  difficulty: facile
+  question_type: single
+  points: 1
+  tags:
+  - IPv4
+  - adresse IP
+- id: net_q008
+  question: Quel est le nombre de bits dans une adresse IPv6 ?
+  options:
+  - '32'
+  - '64'
+  - '128'
+  - '256'
+  correct_answers:
+  - '128'
+  explanation: Une adresse IPv6 utilise 128 bits, ce qui permet d'avoir beaucoup plus
+    d'adresses possibles qu'IPv4.
+  category: Réseaux
+  difficulty: moyen
+  question_type: single
+  points: 1
+  tags:
+  - IPv6
+  - adresse IP
+- id: net_q009
+  question: Quels protocoles de routage existent ? (Choix multiple)
+  options:
+  - RIP
+  - OSPF
+  - BGP
+  - DHCP
+  correct_answers:
+  - RIP
+  - OSPF
+  - BGP
+  explanation: RIP, OSPF et BGP sont des protocoles de routage. DHCP est un protocole
+    d'attribution d'adresses IP.
+  category: Réseaux
+  difficulty: moyen
+  question_type: multiple
+  points: 2
+  tags:
+  - routage
+  - protocoles
+- id: net_q010
+  question: Qu'est-ce qu'un masque de sous-réseau ?
+  options:
+  - Une adresse IP spéciale
+  - Un numéro utilisé pour diviser une adresse IP en réseau et hôte
+  - Un port réseau
+  - Un type de routeur
+  correct_answers:
+  - Un numéro utilisé pour diviser une adresse IP en réseau et hôte
+  explanation: Un masque de sous-réseau est utilisé pour déterminer la partie réseau
+    et la partie hôte d'une adresse IP.
+  category: Réseaux
+  difficulty: moyen
+  question_type: single
+  points: 1
+  tags:
+  - sous-réseau
+  - masque
+- id: net_q011
+  question: Quel protocole est utilisé pour la résolution de noms en adresses IP ?
+  options:
+  - DNS
+  - DHCP
+  - HTTP
+  - FTP
+  correct_answers:
+  - DNS
+  explanation: DNS (Domain Name System) est le protocole utilisé pour traduire les
+    noms de domaine en adresses IP.
+  hint: Pensez aux noms de domaine
+  category: Réseaux
+  difficulty: facile
+  question_type: single
+  points: 1
+  tags:
+  - DNS
+  - résolution
+  - domaine
+- id: net_q012
+  question: Quel est le port par défaut pour DNS ?
+  options:
+  - '53'
+  - '25'
+  - '110'
+  - '143'
+  correct_answers:
+  - '53'
+  explanation: Le port 53 est le port standard pour les requêtes DNS.
+  category: Réseaux
+  difficulty: facile
+  question_type: single
+  points: 1
+  tags:
+  - DNS
+  - port
+- id: net_q013
+  question: Quel protocole est responsable du contrôle de congestion et de la transmission
+    fiable ? (Choix multiple)
+  options:
+  - TCP
+  - UDP
+  - ICMP
+  correct_answers:
+  - TCP
+  explanation: TCP (Transmission Control Protocol) assure une transmission fiable
+    des données avec contrôle de congestion. UDP ne garantit pas la livraison.
+  category: Réseaux
+  difficulty: moyen
+  question_type: single
+  points: 1
+  tags:
+  - TCP
+  - UDP
+  - transport
+- id: net_q014
+  question: Quel protocole est utilisé pour l'administration à distance sécurisée
+    ?
+  options:
+  - Telnet
+  - SSH
+  - FTP
+  - HTTP
+  correct_answers:
+  - SSH
+  explanation: SSH (Secure Shell) est le protocole sécurisé pour l'administration
+    à distance. Telnet l'était avant mais n'est pas sécurisé.
+  category: Réseaux
+  difficulty: facile
+  question_type: single
+  points: 1
+  tags:
+  - SSH
+  - sécurité
+  - administration
+- id: net_q015
+  question: Quel port utilise SSH par défaut ?
+  options:
+  - '21'
+  - '22'
+  - '23'
+  - '25'
+  correct_answers:
+  - '22'
+  explanation: Le port 22 est le port par défaut pour SSH. Le port 21 est FTP, 23
+    est Telnet, 25 est SMTP.
+  category: Réseaux
+  difficulty: facile
+  question_type: single
+  points: 1
+  tags:
+  - SSH
+  - port
+- id: net_q016
+  question: Qu'est-ce qu'un VLAN ?
+  options:
+  - Virtual Local Area Network
+  - Virtual Link Access Network
+  - Virtual Layer Area Network
+  - Virtual Line Access Network
+  correct_answers:
+  - Virtual Local Area Network
+  explanation: Un VLAN (Virtual Local Area Network) est un réseau local virtuel qui
+    permet de segmenter logiquement un réseau physique.
+  category: Réseaux
+  difficulty: moyen
+  question_type: single
+  points: 1
+  tags:
+  - VLAN
+  - segmentation
+- id: net_q017
+  question: Quel protocole est utilisé pour attribuer automatiquement des adresses
+    IP ?
+  options:
+  - DNS
+  - DHCP
+  - ARP
+  - ICMP
+  correct_answers:
+  - DHCP
+  explanation: DHCP (Dynamic Host Configuration Protocol) attribue automatiquement
+    des adresses IP aux appareils du réseau.
+  category: Réseaux
+  difficulty: facile
+  question_type: single
+  points: 1
+  tags:
+  - DHCP
+  - adresse IP
+- id: net_q018
+  question: Quel protocole traduit les adresses IP en adresses MAC ? (Choix multiple)
+  options:
+  - ARP
+  - DNS
+  - DHCP
+  correct_answers:
+  - ARP
+  explanation: ARP (Address Resolution Protocol) traduit les adresses IP en adresses
+    MAC pour la communication locale.
+  category: Réseaux
+  difficulty: moyen
+  question_type: single
+  points: 1
+  tags:
+  - ARP
+  - MAC
+  - IP
+- id: net_q019
+  question: Qu'est-ce qu'un firewall ?
+  options:
+  - Un logiciel antivirus
+  - Un système de sécurité qui contrôle le trafic réseau
+  - Un type de routeur
+  - Un câble réseau
+  correct_answers:
+  - Un système de sécurité qui contrôle le trafic réseau
+  explanation: Un firewall est un système de sécurité qui filtre et contrôle le trafic
+    réseau entrant et sortant selon des règles définies.
+  category: Réseaux
+  difficulty: facile
+  question_type: single
+  points: 1
+  tags:
+  - firewall
+  - sécurité
+- id: net_q020
+  question: Quel protocole ICMP est utilisé pour tester la connectivité réseau ?
+  options:
+  - Echo Request
+  - Destination Unreachable
+  - Time Exceeded
+  - Redirect
+  correct_answers:
+  - Echo Request
+  explanation: Echo Request (Ping) est utilisé pour tester la connectivité réseau
+    et mesurer le délai de réponse.
+  category: Réseaux
+  difficulty: moyen
+  question_type: single
+  points: 1
+  tags:
+  - ICMP
+  - ping
+  - connectivité
