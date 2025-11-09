@@ -171,7 +171,7 @@ class _QuizScreenState extends State<QuizScreen> {
                   'Sélectionnez une ou plusieurs catégories',
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
                 ...categories.map((category) {
                   final questionCount = categoryQuestionCounts[category] ?? 0;
                   final isSelected = selectedCategories.contains(category);
@@ -203,14 +203,14 @@ class _QuizScreenState extends State<QuizScreen> {
                     ),
                   );
                 }),
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
 
                 // Sélection du nombre de questions
                 Text(
                   'Nombre de questions',
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 6),
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
@@ -250,14 +250,14 @@ class _QuizScreenState extends State<QuizScreen> {
                     );
                   }).toList(),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
 
                 // Filtre de difficulté (optionnel)
                 Text(
                   'Filtre de difficulté (optionnel)',
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 6),
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
