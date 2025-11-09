@@ -9,6 +9,7 @@ class QuizEngine {
   int correctAnswers = 0;
   int incorrectAnswers = 0;
   final List<int> questionTimes = [];
+  final Map<String, bool> answerResults = {}; // Stocker les résultats par question ID
   DateTime? questionStartTime;
 
   QuizEngine(this.allQuestions);
@@ -36,6 +37,7 @@ class QuizEngine {
     correctAnswers = 0;
     incorrectAnswers = 0;
     questionTimes.clear();
+    answerResults.clear();
     questionStartTime = DateTime.now();
   }
 
@@ -61,6 +63,9 @@ class QuizEngine {
     // Vérifier la réponse
     final isCorrect = currentQuestion.isCorrectAnswer(answer);
 
+    // Enregistrer le résultat par question
+    answerResults[currentQuestion.id] = isCorrect;
+
     if (isCorrect) {
       correctAnswers++;
     } else {
@@ -83,6 +88,9 @@ class QuizEngine {
 
     // Vérifier les réponses
     final isCorrect = currentQuestion.areCorrectAnswers(answers);
+
+    // Enregistrer le résultat par question
+    answerResults[currentQuestion.id] = isCorrect;
 
     if (isCorrect) {
       correctAnswers++;

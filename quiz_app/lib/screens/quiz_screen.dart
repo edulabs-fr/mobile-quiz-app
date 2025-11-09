@@ -23,6 +23,7 @@ class _QuizScreenState extends State<QuizScreen> {
   bool? isCorrect;
   Map<String, int> categoryQuestionCounts = {};
   late ScrollController _scrollController; // Contrôleur pour maintenir la position du scroll
+  late ScrollController _resultScrollController; // Contrôleur pour scroller vers le résultat
   Set<String> selectedDifficulties = {}; // Filtre de difficulté
   late Future<Map<String, dynamic>> _categoriesFuture; // Cache la future pour éviter les re-appels
 
@@ -34,12 +35,14 @@ class _QuizScreenState extends State<QuizScreen> {
   void initState() {
     super.initState();
     _scrollController = ScrollController();
+    _resultScrollController = ScrollController();
     _categoriesFuture = _loadCategoriesWithCounts(); // Cacher la future une seule fois
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    _resultScrollController.dispose();
     super.dispose();
   }
 
@@ -390,6 +393,7 @@ class _QuizScreenState extends State<QuizScreen> {
           // Contenu de la question
           Expanded(
             child: SingleChildScrollView(
+              controller: _resultScrollController,
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -558,56 +562,46 @@ class _QuizScreenState extends State<QuizScreen> {
                     );
                   }),
 
-                  // Affichage du résultat
+                  // Message de résultat rapide
                   if (showResult) ...[
                     const SizedBox(height: 24),
-                    Card(
-                      color: isCorrect! ? Colors.green.shade50 : Colors.red.shade50,
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  isCorrect! ? Icons.check_circle : Icons.cancel,
-                                  color: isCorrect! ? Colors.green : Colors.red,
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  isCorrect! ? 'Correct !' : 'Incorrect',
-                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                        color: isCorrect! ? Colors.green : Colors.red,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              'Explication :',
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(question.explanation),
-                            if (question.hint != null) ...[
-                              const SizedBox(height: 12),
-                              Text(
-                                'Astuce :',
-                                style: Theme.of(context).textTheme.titleSmall,
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                question.hint!,
-                                style: TextStyle(
-                                  fontStyle: FontStyle.italic,
-                                  color: Colors.grey.shade700,
-                                ),
-                              ),
-                            ],
-                          ],
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: isCorrect! ? Colors.green.shade50 : Colors.red.shade50,
+                        border: Border.all(
+                          color: isCorrect! ? Colors.green : Colors.red,
+                          width: 2,
                         ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            isCorrect! ? Icons.check_circle : Icons.cancel,
+                            color: isCorrect! ? Colors.green : Colors.red,
+                            size: 28,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              isCorrect! ? 'Correct !' : 'Incorrect',
+                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    color: isCorrect! ? Colors.green : Colors.red,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                          ),
+                          FilledButton.icon(
+                            onPressed: () => _showExplanationDialog(question),
+                            icon: const Icon(Icons.info_outline, size: 18),
+                            label: const Text('Explication'),
+                            style: FilledButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              backgroundColor: isCorrect! ? Colors.green : Colors.red,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -641,6 +635,81 @@ class _QuizScreenState extends State<QuizScreen> {
                   ),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Afficher le popup d'explication
+  void _showExplanationDialog(Question question) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(
+              isCorrect! ? Icons.check_circle : Icons.cancel,
+              color: isCorrect! ? Colors.green : Colors.red,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                isCorrect! ? 'Correct !' : 'Incorrect',
+              ),
+            ),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Explication :',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 8),
+              Text(question.explanation),
+              if (question.hint != null) ...[
+                const SizedBox(height: 16),
+                Text(
+                  'Astuce :',
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  question.hint!,
+                  style: TextStyle(
+                    fontStyle: FontStyle.italic,
+                    color: Colors.grey.shade700,
+                  ),
+                ),
+              ],
+              // Afficher les bonnes réponses
+              const SizedBox(height: 16),
+              Text(
+                'Bonne(s) réponse(s) :',
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
+              const SizedBox(height: 8),
+              ...question.correctAnswers.map((answer) => Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: Row(
+                  children: [
+                    const Icon(Icons.check, color: Colors.green, size: 18),
+                    const SizedBox(width: 8),
+                    Expanded(child: Text(answer)),
+                  ],
+                ),
+              )),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Fermer'),
           ),
         ],
       ),
@@ -989,6 +1058,17 @@ class _QuizScreenState extends State<QuizScreen> {
       isCorrect = correct;
       showResult = true;
     });
+
+    // Auto-scroller vers le résultat après un petit délai
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted && _resultScrollController.hasClients) {
+        _resultScrollController.animateTo(
+          _resultScrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
   }
 
   /// Passer à la question suivante
@@ -997,6 +1077,30 @@ class _QuizScreenState extends State<QuizScreen> {
     if (quizEngine!.isLastQuestion()) {
       // Sauvegarder le résultat
       final categoriesName = selectedCategories.join(', ');
+      
+      // Calculer les stats par difficulté
+      final difficultyStats = <String, dynamic>{};
+      final difficultiesSet = <String>{};
+      
+      for (final question in quizEngine!.currentQuestions) {
+        difficultiesSet.add(question.difficulty);
+        
+        if (!difficultyStats.containsKey(question.difficulty)) {
+          difficultyStats[question.difficulty] = {
+            'total': 0,
+            'correct': 0,
+          };
+        }
+        
+        difficultyStats[question.difficulty]['total']++;
+        
+        // Vérifier le résultat de cette question
+        final isCorrect = quizEngine!.answerResults[question.id] ?? false;
+        if (isCorrect) {
+          difficultyStats[question.difficulty]['correct']++;
+        }
+      }
+      
       final result = QuizResult(
         id: QuizResult.generateId(),
         date: DateTime.now(),
@@ -1005,6 +1109,8 @@ class _QuizScreenState extends State<QuizScreen> {
         correct: quizEngine!.correctAnswers,
         incorrect: quizEngine!.incorrectAnswers,
         averageTimePerQuestion: quizEngine!.getAverageTimePerQuestion(),
+        difficultyStats: difficultyStats,
+        difficultiesPresentes: difficultiesSet.toList()..sort(),
       );
       await StorageService.saveQuizResult(result);
       

@@ -105,6 +105,49 @@ class StorageService {
     return results.take(limit).toList();
   }
 
+  /// Calculer le score moyen par difficulté
+  static Map<String, double> getAverageScoreByDifficulty() {
+    final results = getAllResults();
+    final scoreByDifficulty = <String, List<double>>{};
+
+    for (final result in results) {
+      // Extraire les stats par difficulté
+      final difficultyStats = result.difficultyStats;
+      
+      for (final difficulty in result.difficultiesPresentes) {
+        if (!scoreByDifficulty.containsKey(difficulty)) {
+          scoreByDifficulty[difficulty] = [];
+        }
+
+        // Calculer le score de ce quiz pour cette difficulté
+        final stats = difficultyStats[difficulty] as Map<String, dynamic>?;
+        if (stats != null) {
+          final total = stats['total'] as int? ?? 0;
+          final correct = stats['correct'] as int? ?? 0;
+          
+          if (total > 0) {
+            // Calculer le pourcentage basé sur la proportion du score total
+            final scoreForDifficulty = (correct / total) * 100;
+            scoreByDifficulty[difficulty]!.add(scoreForDifficulty);
+          }
+        }
+      }
+    }
+
+    // Calculer les moyennes
+    final averages = <String, double>{};
+    scoreByDifficulty.forEach((difficulty, scores) {
+      if (scores.isNotEmpty) {
+        final sum = scores.fold<double>(0, (prev, score) => prev + score);
+        averages[difficulty] = sum / scores.length;
+      } else {
+        averages[difficulty] = 0.0;
+      }
+    });
+
+    return averages;
+  }
+
   /// Effacer tout l'historique des résultats
   static Future<void> clearAllResults() async {
     final box = Hive.box<QuizResult>(_resultsBox);

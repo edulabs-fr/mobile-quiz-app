@@ -26,6 +26,12 @@ class QuizResult {
   @HiveField(6)
   final double averageTimePerQuestion;
 
+  @HiveField(7)
+  final Map<String, dynamic> difficultyStats; // Nouvelles données par difficulté
+
+  @HiveField(8)
+  final List<String> difficultiesPresentes; // Difficultés présentes dans le quiz
+
   QuizResult({
     required this.id,
     required this.date,
@@ -34,6 +40,8 @@ class QuizResult {
     required this.correct,
     required this.incorrect,
     required this.averageTimePerQuestion,
+    this.difficultyStats = const {},
+    this.difficultiesPresentes = const [],
   });
 
   /// Calculer le score en pourcentage
@@ -56,6 +64,8 @@ class QuizResult {
     int? correct,
     int? incorrect,
     double? averageTimePerQuestion,
+    Map<String, dynamic>? difficultyStats,
+    List<String>? difficultiesPresentes,
   }) {
     return QuizResult(
       id: id ?? this.id,
@@ -65,6 +75,8 @@ class QuizResult {
       correct: correct ?? this.correct,
       incorrect: incorrect ?? this.incorrect,
       averageTimePerQuestion: averageTimePerQuestion ?? this.averageTimePerQuestion,
+      difficultyStats: difficultyStats ?? this.difficultyStats,
+      difficultiesPresentes: difficultiesPresentes ?? this.difficultiesPresentes,
     );
   }
 
@@ -78,6 +90,8 @@ class QuizResult {
       'correct': correct,
       'incorrect': incorrect,
       'average_time_per_question': averageTimePerQuestion,
+      'difficulty_stats': difficultyStats,
+      'difficulties_presentes': difficultiesPresentes,
     };
   }
 
@@ -91,6 +105,8 @@ class QuizResult {
       correct: json['correct'] as int,
       incorrect: json['incorrect'] as int,
       averageTimePerQuestion: (json['average_time_per_question'] as num).toDouble(),
+      difficultyStats: json['difficulty_stats'] as Map<String, dynamic>? ?? {},
+      difficultiesPresentes: List<String>.from(json['difficulties_presentes'] as List? ?? []),
     );
   }
 }

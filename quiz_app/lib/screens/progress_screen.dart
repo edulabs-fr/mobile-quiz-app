@@ -181,6 +181,50 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   ),
                   const SizedBox(height: 32),
 
+                  // Statistiques par difficulté
+                  Text(
+                    'Moyenne par difficulté',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  const SizedBox(height: 16),
+                  Builder(
+                    builder: (context) {
+                      final difficultyAverages = StorageService.getAverageScoreByDifficulty();
+                      
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: _StatCard(
+                              icon: Icons.emoji_events,
+                              title: 'Facile',
+                              value: '${(difficultyAverages['facile'] ?? 0).toStringAsFixed(1)}%',
+                              color: Colors.green,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _StatCard(
+                              icon: Icons.emoji_events,
+                              title: 'Moyen',
+                              value: '${(difficultyAverages['moyen'] ?? 0).toStringAsFixed(1)}%',
+                              color: Colors.orange,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _StatCard(
+                              icon: Icons.emoji_events,
+                              title: 'Difficile',
+                              value: '${(difficultyAverages['difficile'] ?? 0).toStringAsFixed(1)}%',
+                              color: Colors.red,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 32),
+
                   // Historique récent
                   Text(
                     'Historique récent',
@@ -208,9 +252,51 @@ class _ProgressScreenState extends State<ProgressScreen> {
                             ),
                           ),
                         ),
-                        title: Text(
-                          _formatCategoryName(result.category),
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              _formatCategoryName(result.category),
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(height: 4),
+                            // Chip pour les difficultés présentes
+                            Wrap(
+                              spacing: 4,
+                              children: result.difficultiesPresentes.map((difficulty) {
+                                Color chipColor;
+                                switch (difficulty) {
+                                  case 'facile':
+                                    chipColor = Colors.green;
+                                    break;
+                                  case 'moyen':
+                                    chipColor = Colors.orange;
+                                    break;
+                                  case 'difficile':
+                                    chipColor = Colors.red;
+                                    break;
+                                  default:
+                                    chipColor = Colors.grey;
+                                }
+                                return Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: chipColor.withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(color: chipColor, width: 0.5),
+                                  ),
+                                  child: Text(
+                                    difficulty[0].toUpperCase() + difficulty.substring(1),
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w500,
+                                      color: chipColor,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ],
                         ),
                         subtitle: Text(
                           '${result.correct}/${result.questionsTotal} correctes • '
