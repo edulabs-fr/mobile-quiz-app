@@ -14,6 +14,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+  bool _isQuizActive = false;
 
   // Liste des écrans
   static const List<Widget> _screens = [
@@ -24,9 +25,36 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    // Si on est en plein quiz et on clique sur un autre onglet, afficher une confirmation
+    if (_selectedIndex == 0 && _isQuizActive && index != 0) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Quiz en cours'),
+          content: const Text('Êtes-vous sûr de vouloir quitter le quiz ? Vos progrès ne seront pas sauvegardés.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Continuer le quiz'),
+            ),
+            FilledButton(
+              onPressed: () {
+                Navigator.pop(context);
+                setState(() {
+                  _selectedIndex = index;
+                  _isQuizActive = false;
+                });
+              },
+              child: const Text('Quitter'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
 
   @override

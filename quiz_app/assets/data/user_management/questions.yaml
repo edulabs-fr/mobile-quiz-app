@@ -18,7 +18,7 @@
   explanation: "useradd est la commande bas-niveau pour créer un utilisateur. adduser est un wrapper plus convivial disponible sur Debian/Ubuntu."
   hint: "Cette commande se trouve dans /usr/sbin/"
   category: "user_management"
-  difficulty: "easy"
+  difficulty: "facile"
   question_type: "single"
   points: 1
   tags: ["useradd", "création", "utilisateur", "commande"]
@@ -35,7 +35,7 @@
   explanation: "La commande passwd permet de définir ou modifier le mot de passe d'un utilisateur."
   hint: "Pensez à 'password' mais en plus court"
   category: "user_management"
-  difficulty: "easy"
+  difficulty: "facile"
   question_type: "single"
   points: 1
   tags: ["passwd", "mot de passe", "sécurité"]
@@ -54,7 +54,7 @@
   explanation: "Les options -d, -m et -s sont valides. L'option -h n'existe pas pour useradd (utilisez --help à la place)."
   hint: "Trois options sont correctes"
   category: "user_management"
-  difficulty: "medium"
+  difficulty: "moyen"
   question_type: "multiple"
   points: 2
   tags: ["useradd", "options", "création utilisateur"]
@@ -70,7 +70,7 @@
   explanation: "userdel -r supprime l'utilisateur et son répertoire home. Sans -r, seul le compte est supprimé."
   hint: "del pour delete, -r pour récursif"
   category: "user_management"
-  difficulty: "medium"
+  difficulty: "moyen"
   points: 1
   tags: ["userdel", "suppression", "utilisateur"]
 
@@ -88,7 +88,7 @@
   explanation: "/etc/passwd contient les informations de base (UID, GID, shell). /etc/shadow contient les mots de passe chiffrés. /etc/group contient les groupes. /etc/users n'existe pas."
   hint: "Trois fichiers sont corrects"
   category: "user_management"
-  difficulty: "medium"
+  difficulty: "moyen"
   question_type: "multiple"
   points: 2
   tags: ["fichiers système", "passwd", "shadow", "group"]
@@ -105,7 +105,7 @@
   explanation: "usermod -aG ajoute l'utilisateur à un groupe supplémentaire sans retirer les autres groupes. Sans -a, les autres groupes seraient perdus."
   hint: "-a pour append, -G pour groups"
   category: "user_management"
-  difficulty: "medium"
+  difficulty: "moyen"
   points: 1
   tags: ["usermod", "groupe", "append"]
 
@@ -122,7 +122,7 @@
   explanation: "Les deux commandes affichent les groupes. 'groups' affiche uniquement les groupes, 'id' donne aussi l'UID et GID."
   hint: "Deux commandes sont correctes"
   category: "user_management"
-  difficulty: "easy"
+  difficulty: "facile"
   question_type: "multiple"
   points: 1
   tags: ["groups", "id", "affichage"]
@@ -141,7 +141,7 @@
   explanation: "usermod -L et passwd -l verrouillent en préfixant le mot de passe par '!'. chage -E 0 expire immédiatement le compte. lockuser n'existe pas."
   hint: "Trois méthodes sont valides"
   category: "user_management"
-  difficulty: "hard"
+  difficulty: "difficile"
   question_type: "multiple"
   points: 3
   tags: ["verrouillage", "sécurité", "usermod", "passwd", "chage"]
@@ -157,7 +157,7 @@
   explanation: "Sur la plupart des distributions Linux modernes, les UID utilisateurs commencent à 1000. L'UID 0 est réservé à root."
   hint: "Un nombre rond à 4 chiffres"
   category: "user_management"
-  difficulty: "easy"
+  difficulty: "facile"
   points: 1
   tags: ["UID", "utilisateur", "identifiant"]
 
@@ -174,7 +174,7 @@
   explanation: "usermod -s et chsh -s permettent de changer le shell. chsh est plus spécialisé pour cette tâche."
   hint: "Deux commandes sont correctes, s pour shell"
   category: "user_management"
-  difficulty: "medium"
+  difficulty: "moyen"
   question_type: "multiple"
   points: 2
   tags: ["shell", "usermod", "chsh"]

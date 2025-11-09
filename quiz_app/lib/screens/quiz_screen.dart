@@ -22,10 +22,26 @@ class _QuizScreenState extends State<QuizScreen> {
   bool showResult = false;
   bool? isCorrect;
   Map<String, int> categoryQuestionCounts = {};
+  late ScrollController _scrollController; // Contrôleur pour maintenir la position du scroll
+  Set<String> selectedDifficulties = {}; // Filtre de difficulté
+  late Future<Map<String, dynamic>> _categoriesFuture; // Cache la future pour éviter les re-appels
 
-  // Les options de nombre de questions seront maintenant "10", "20", "40", "Toutes"
-  // On utilisera -1 pour représenter "Toutes"
-  final List<int> questionCounts = [10, 20, 40, -1];
+  // Les options de nombre de questions
+  final List<int> questionCounts = [10, 30, 50, -1]; // Changé en 10, 30, 50, Toutes
+  final List<String> difficulties = ['facile', 'moyen', 'difficile'];
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    _categoriesFuture = _loadCategoriesWithCounts(); // Cacher la future une seule fois
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   /// Charger les catégories avec le nombre de questions
   Future<Map<String, dynamic>> _loadCategoriesWithCounts() async {
@@ -56,10 +72,70 @@ class _QuizScreenState extends State<QuizScreen> {
   Widget _buildSetupView() {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Quiz - Entraînement'),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Quiz - Entraînement'),
+            const SizedBox(width: 8),
+            IconButton(
+              icon: const Icon(Icons.help_outline),
+              tooltip: 'Comment ça marche ?',
+              iconSize: 20,
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Comment ça marche ?'),
+                    content: const SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            '1. Choisissez une catégorie',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 8),
+                          Text('Sélectionnez une ou plusieurs catégories parmi celles disponibles.'),
+                          SizedBox(height: 16),
+                          Text(
+                            '2. Sélectionnez le nombre de questions',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 8),
+                          Text('Choisissez 10, 30, 50 questions ou toutes les questions disponibles.'),
+                          SizedBox(height: 16),
+                          Text(
+                            '3. Filtrez par difficulté (optionnel)',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 8),
+                          Text('Vous pouvez filtrer les questions par niveau de difficulté.'),
+                          SizedBox(height: 16),
+                          Text(
+                            '4. Répondez aux questions',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 8),
+                          Text('Sélectionnez vos réponses et consultez les explications.'),
+                        ],
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Fermer'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
       body: FutureBuilder<Map<String, dynamic>>(
-        future: _loadCategoriesWithCounts(),
+        future: _categoriesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -75,43 +151,11 @@ class _QuizScreenState extends State<QuizScreen> {
           categoryQuestionCounts = snapshot.data!['counts'] as Map<String, int>;
 
           return SingleChildScrollView(
+            controller: _scrollController,
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Instructions
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.info_outline,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Comment ça marche ?',
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        const Text(
-                          '1. Choisissez une catégorie\n'
-                          '2. Sélectionnez le nombre de questions\n'
-                          '3. Répondez aux questions\n'
-                          '4. Consultez vos résultats !',
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-
                 // Sélection de catégorie
                 Text(
                   'Sélectionnez une ou plusieurs catégories',
@@ -154,44 +198,98 @@ class _QuizScreenState extends State<QuizScreen> {
                 // Sélection du nombre de questions
                 Text(
                   'Nombre de questions',
-                  style: Theme.of(context).textTheme.titleLarge,
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: 12),
-                ...questionCounts.map((count) {
-                  // Calculer le total disponible de toutes les catégories sélectionnées
-                  int totalAvailable = 0;
-                  for (final category in selectedCategories) {
-                    totalAvailable += categoryQuestionCounts[category] ?? 0;
-                  }
-                  
-                  // Si "Toutes" est sélectionné (count = -1), afficher le nombre total
-                  final displayText = count == -1 
-                      ? 'Toutes questions ($totalAvailable)'
-                      : '$count questions';
-                  
-                  // Désactiver l'option si elle dépasse le nombre disponible
-                  final isEnabled = count == -1 || count <= totalAvailable;
-                  
-                  return Card(
-                    margin: const EdgeInsets.only(bottom: 8),
-                    color: isEnabled ? null : Colors.grey.shade200,
-                    child: RadioListTile<int>(
-                      value: count,
-                      groupValue: selectedQuestionCount,
-                      onChanged: isEnabled ? (value) {
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: questionCounts.map((count) {
+                    // Calculer le total disponible de toutes les catégories sélectionnées
+                    int totalAvailable = 0;
+                    for (final category in selectedCategories) {
+                      totalAvailable += categoryQuestionCounts[category] ?? 0;
+                    }
+                    
+                    // Si "Toutes" est sélectionné (count = -1), afficher le nombre total
+                    final displayText = count == -1 
+                        ? 'Toutes'
+                        : '$count';
+                    
+                    // Désactiver l'option si elle dépasse le nombre disponible
+                    final isEnabled = count == -1 || count <= totalAvailable;
+                    final isSelected = selectedQuestionCount == count;
+                    
+                    return FilterChip(
+                      label: Text(displayText),
+                      selected: isSelected,
+                      onSelected: isEnabled ? (selected) {
                         setState(() {
-                          selectedQuestionCount = value;
+                          if (selected) {
+                            selectedQuestionCount = count;
+                          }
                         });
                       } : null,
-                      title: Text(
-                        displayText,
-                        style: const TextStyle(fontWeight: FontWeight.w500),
+                      selectedColor: const Color(0xFFEE0000), // Red Hat Red
+                      labelStyle: TextStyle(
+                        color: isSelected ? Colors.white : Colors.black,
+                        fontWeight: FontWeight.w500,
                       ),
-                      activeColor: const Color(0xFFEE0000), // Red Hat Red
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    ),
-                  );
-                }),
+                      backgroundColor: isEnabled ? null : Colors.grey.shade200,
+                      disabledColor: Colors.grey.shade200,
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 24),
+
+                // Filtre de difficulté (optionnel)
+                Text(
+                  'Filtre de difficulté (optionnel)',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: difficulties.map((difficulty) {
+                    final isSelected = selectedDifficulties.contains(difficulty);
+                    
+                    // Couleurs par difficulté
+                    Color color;
+                    switch (difficulty) {
+                      case 'facile':
+                        color = Colors.green;
+                        break;
+                      case 'moyen':
+                        color = Colors.orange;
+                        break;
+                      case 'difficile':
+                        color = Colors.red;
+                        break;
+                      default:
+                        color = Colors.grey;
+                    }
+                    
+                    return FilterChip(
+                      label: Text(difficulty[0].toUpperCase() + difficulty.substring(1)),
+                      selected: isSelected,
+                      onSelected: (selected) {
+                        setState(() {
+                          if (selected) {
+                            selectedDifficulties.add(difficulty);
+                          } else {
+                            selectedDifficulties.remove(difficulty);
+                          }
+                        });
+                      },
+                      selectedColor: color.withOpacity(0.7),
+                      labelStyle: TextStyle(
+                        color: isSelected ? Colors.white : Colors.black,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    );
+                  }).toList(),
+                ),
                 const SizedBox(height: 32),
 
                 // Bouton Démarrer
@@ -225,6 +323,38 @@ class _QuizScreenState extends State<QuizScreen> {
       appBar: AppBar(
         title: Text(
           'Question ${quizEngine!.currentIndex + 1}/${quizEngine!.getTotalQuestions()}',
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          tooltip: 'Quitter le quiz',
+          onPressed: () {
+            // Afficher une confirmation
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Quitter le quiz ?'),
+                content: const Text('Vos progrès ne seront pas sauvegardés.'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Continuer'),
+                  ),
+                  FilledButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      setState(() {
+                        isQuizActive = false;
+                        quizEngine = null;
+                        selectedAnswers.clear();
+                        showResult = false;
+                      });
+                    },
+                    child: const Text('Quitter'),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
         actions: [
           // Progression
@@ -291,32 +421,29 @@ class _QuizScreenState extends State<QuizScreen> {
                             ],
                           ),
                           const SizedBox(height: 12),
-                          // Métadonnées de la question
-                          Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
+                          // Indicateur de difficulté simplifié
+                          Row(
                             children: [
-                              if (question.isMultipleChoice)
-                                Chip(
-                                  label: const Text('Choix multiples'),
-                                  avatar: const Icon(Icons.check_box, size: 16),
-                                  backgroundColor: Colors.blue.shade100,
-                                ),
-                              Chip(
-                                label: Text(question.difficulty),
-                                avatar: Icon(
-                                  question.difficulty == 'facile'
-                                      ? Icons.sentiment_satisfied
+                              // Pastille de couleur pour la difficulté
+                              Container(
+                                width: 12,
+                                height: 12,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: question.difficulty == 'facile'
+                                      ? Colors.green
                                       : question.difficulty == 'moyen'
-                                          ? Icons.sentiment_neutral
-                                          : Icons.sentiment_dissatisfied,
-                                  size: 16,
+                                          ? Colors.orange
+                                          : Colors.red,
                                 ),
-                                backgroundColor: question.difficulty == 'facile'
-                                    ? Colors.green.shade100
-                                    : question.difficulty == 'moyen'
-                                        ? Colors.orange.shade100
-                                        : Colors.red.shade100,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                question.difficulty[0].toUpperCase() + question.difficulty.substring(1),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 13,
+                                ),
                               ),
                             ],
                           ),
@@ -740,7 +867,13 @@ class _QuizScreenState extends State<QuizScreen> {
     Map<String, List<Question>> questionsByCategory = {};
     
     for (final category in selectedCategories) {
-      final questions = await DataService.loadQuestions(category);
+      var questions = await DataService.loadQuestions(category);
+      
+      // Filtrer par difficulté si des filtres sont sélectionnés
+      if (selectedDifficulties.isNotEmpty) {
+        questions = questions.where((q) => selectedDifficulties.contains(q.difficulty)).toList();
+      }
+      
       if (questions.isNotEmpty) {
         questionsByCategory[category] = questions;
       }
@@ -750,7 +883,7 @@ class _QuizScreenState extends State<QuizScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Aucune question disponible pour les catégories sélectionnées'),
+            content: Text('Aucune question disponible pour les critères sélectionnés'),
           ),
         );
       }
@@ -766,18 +899,41 @@ class _QuizScreenState extends State<QuizScreen> {
         allQuestions.addAll(questions);
       }
     } else {
-      // Distribuer équitablement
+      // Distribuer équitablement par catégorie ET par difficulté
       final numCategories = questionsByCategory.length;
-      final questionsPerCategory = numberOfQuestions ~/ numCategories; // Division entière
-      final remainder = numberOfQuestions % numCategories; // Reste
+      final questionsPerCategory = numberOfQuestions ~/ numCategories;
+      final remainder = numberOfQuestions % numCategories;
       
       int categoryIndex = 0;
       for (final category in questionsByCategory.keys) {
-        final questions = questionsByCategory[category]!;
+        var questions = questionsByCategory[category]!;
         
-        // Ajouter des questions supplémentaires au début si reste > 0
+        // Calculer le nombre de questions pour cette catégorie
         final count = questionsPerCategory + (categoryIndex < remainder ? 1 : 0);
-        final questionsToAdd = questions.take(count).toList();
+        
+        // Grouper les questions par difficulté
+        final questionsByDifficulty = <String, List<Question>>{};
+        for (final q in questions) {
+          (questionsByDifficulty[q.difficulty] ??= []).add(q);
+        }
+        
+        // Distribuer équitablement les questions par difficulté
+        final questionsToAdd = <Question>[];
+        final numDifficulties = questionsByDifficulty.length;
+        final questionsPerDifficulty = count ~/ numDifficulties;
+        final difficultyRemainder = count % numDifficulties;
+        
+        int diffIndex = 0;
+        for (final difficulty in questionsByDifficulty.keys) {
+          final diffQuestions = questionsByDifficulty[difficulty]!;
+          final diffCount = questionsPerDifficulty + (diffIndex < difficultyRemainder ? 1 : 0);
+          
+          // Prendre les questions pour cette difficulté
+          final diffQuestionsToTake = diffQuestions.take(diffCount).toList();
+          questionsToAdd.addAll(diffQuestionsToTake);
+          
+          diffIndex++;
+        }
         
         allQuestions.addAll(questionsToAdd);
         categoryIndex++;
@@ -794,6 +950,9 @@ class _QuizScreenState extends State<QuizScreen> {
       }
       return;
     }
+
+    // Mélanger les questions aléatoirement
+    allQuestions.shuffle();
 
     setState(() {
       quizEngine = QuizEngine(allQuestions);
