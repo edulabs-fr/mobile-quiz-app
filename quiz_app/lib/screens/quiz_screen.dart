@@ -268,7 +268,10 @@ class _QuizScreenState extends State<QuizScreen> {
                               Expanded(
                                 child: Text(
                                   question.question,
-                                  style: Theme.of(context).textTheme.headlineSmall,
+                                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 12),
@@ -365,7 +368,7 @@ class _QuizScreenState extends State<QuizScreen> {
                                 });
                               },
                         child: Padding(
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                           child: Row(
                             children: [
                               // Checkbox pour choix multiples, Radio pour choix unique
@@ -402,7 +405,9 @@ class _QuizScreenState extends State<QuizScreen> {
                               Expanded(
                                 child: Text(
                                   option,
-                                  style: Theme.of(context).textTheme.bodyLarge,
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    fontSize: 14,
+                                  ),
                                 ),
                               ),
                               if (showResult && question.correctAnswers.contains(option))
