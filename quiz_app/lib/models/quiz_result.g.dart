@@ -24,8 +24,8 @@ class QuizResultAdapter extends TypeAdapter<QuizResult> {
       correct: fields[4] as int,
       incorrect: fields[5] as int,
       averageTimePerQuestion: fields[6] as double,
-      difficultyStats: fields[7] != null ? (fields[7] as Map).cast<String, dynamic>() : {},
-      difficultiesPresentes: fields[8] != null ? (fields[8] as List).cast<String>() : [],
+      difficultyStats: (fields[7] as Map).cast<String, dynamic>(),
+      difficultiesPresentes: (fields[8] as List).cast<String>(),
     );
   }
 
