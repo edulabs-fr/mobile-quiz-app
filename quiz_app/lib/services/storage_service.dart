@@ -122,10 +122,11 @@ class StorageService {
         }
 
         // Calculer le score de ce quiz pour cette difficulté
-        final stats = difficultyStats[difficulty] as Map<String, dynamic>?;
-        if (stats != null) {
-          final total = stats['total'] as int? ?? 0;
-          final correct = stats['correct'] as int? ?? 0;
+        final stats = difficultyStats[difficulty];
+        if (stats is Map) {
+          final statsMap = Map<String, dynamic>.from(stats as Map);
+          final total = statsMap['total'] as int? ?? 0;
+          final correct = statsMap['correct'] as int? ?? 0;
           
           if (total > 0) {
             // Calculer le pourcentage basé sur la proportion du score total
